@@ -1,0 +1,4 @@
+*.exe
+t_*
+
+.vscode/
