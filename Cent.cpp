@@ -5,40 +5,75 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <unordered_map>
 #include <queue>
 
 
-enum class TokenType 
-{
-    // SINGLE CHARACTER TOKENS
-    LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-    COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+namespace Spec {
+    enum class TokenType 
+    {
+        // SINGLE CHARACTER TOKENS
+        LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+        COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
 
-    // ONE OR TWO CHARACTER TOKENS
-    BANG, BANG_EQ,
-    EQUAL, EQUAL_EQ,
-    GREATER, GREATER_EQ,
-    LESS, LESS_EQ,
-    COMMENT,
+        // ONE OR TWO CHARACTER TOKENS
+        BANG, BANG_EQ,
+        EQUAL, EQUAL_EQ,
+        GREATER, GREATER_EQ,
+        LESS, LESS_EQ,
+        COMMENT,
 
-    // LITERALS
-    IDENTIFIER, STRING, NUMBER, CHAR,
+        // LITERALS
+        IDENTIFIER, STRING, NUMBER, CHAR,
 
-    // KEYWORDS
-    AND, CLASS, ELSE, FALSE, FUN, FOR, NIL, OR,
-    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+        // KEYWORDS
+        AND, OR, CLASS, IF, ELSE, VAR, FUNC, FOR, WHILE,  
+        RETURN, PRINT, SUPER, THIS, TRUE, FALSE, NIL,
 
-    ENOF
-};
+        ENOF
+    };
 
+    struct Token 
+    {
+        int line;
+        TokenType type;
+        std::string literal;
+        std::string lexeme;
+    };
 
-struct Token 
-{
-    int line;
-    TokenType type;
-    std::string literal;
-    std::string lexeme;
-};
+    namespace 
+    {
+        std::unordered_map<std::string_view, TokenType> s_reserved = {
+            {"and", TokenType::AND},
+            {"or", TokenType::OR},
+            {"class", TokenType::CLASS},
+            {"if", TokenType::IF},
+            {"else", TokenType::ELSE},
+            {"var", TokenType::VAR},
+            {"func", TokenType::FUNC},
+            {"for", TokenType::FOR},
+            {"while", TokenType::WHILE},
+            {"return", TokenType::RETURN},
+            {"super", TokenType::SUPER},
+            {"this", TokenType::THIS},
+            {"print", TokenType::PRINT},
+            {"nil", TokenType::NIL},
+            {"true", TokenType::TRUE},
+            {"false", TokenType::FALSE},
+        };
+    }
+
+    inline TokenType reserved(std::string_view word) { 
+        try 
+        {
+            return s_reserved.at(word);
+        } 
+        catch(const std::out_of_range& e)
+        {
+            return TokenType::IDENTIFIER;
+        }
+    }
+}
 
 
 namespace ERRHAND
@@ -105,6 +140,8 @@ namespace Tools {
 
 namespace Scanner 
 {
+    using namespace Spec;
+
     std::vector<Token> scan(std::string p_source) 
     {
         int s_linenum {0};
@@ -233,8 +270,8 @@ namespace Scanner
                     s_column = 0;
                     break;
                 
-                case 0: case 1: case 2: case 3: case 4: 
-                case 5: case 6: case 7: case 8: case 9:
+                case '0': case '1': case '2': case '3': case '4': 
+                case '5': case '6': case '7': case '8': case '9':
                     while (std::isdigit(consume()))
                         lexeme_buf += c;
 
@@ -253,7 +290,14 @@ namespace Scanner
 
 
                 default:
-                    ERRHAND::Queue::push(s_linenum, s_column, "Unrecognize Character", ERRHAND::Phase::SCANNING);
+                    if(std::isalpha(c))
+                    {
+                        while(std::isalnum(consume())) 
+                            lexeme_buf += c;
+
+                       add_token(Spec::reserved(lexeme_buf));
+                    } else
+                        ERRHAND::Queue::push(s_linenum, s_column, "Unrecognize Character", ERRHAND::Phase::SCANNING);
             }
         }
 
