@@ -63,7 +63,7 @@ namespace Spec {
         };
     }
 
-    inline TokenType reserved(std::string_view word) { 
+    inline TokenType reserved(std::string_view word) noexcept { 
         try 
         {
             return s_reserved.at(word);
@@ -95,17 +95,17 @@ namespace ERRHAND
             std::queue<Errors> s_errors;
         }
 
-        void push(int p_line, int p_column, std::string p_reason, Phase p_phase)
+        void push(int p_line, int p_column, std::string p_reason, Phase p_phase) noexcept
         {
             s_errors.emplace(p_line, p_column, p_phase, p_reason);
         }
 
-        void consume()
+        void consume() noexcept
         {
             // Pop the queue and print the output
         }
 
-        auto count() { return s_errors.size(); }
+        auto count() noexcept { return s_errors.size(); }
     }
 
     // Immediately close the program.
@@ -142,7 +142,7 @@ namespace Scanner
 {
     using namespace Spec;
 
-    std::vector<Token> scan(std::string p_source) 
+    std::vector<Token> scan(std::string p_source) noexcept
     {
         int s_linenum {0};
         int s_column {0};
