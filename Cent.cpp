@@ -43,7 +43,7 @@ namespace Spec {
 
     namespace 
     {
-        std::unordered_map<std::string_view, TokenType> s_reserved = {
+        std::unordered_map<std::string_view, TokenType> s_reserved {
             {"and", TokenType::AND},
             {"or", TokenType::OR},
             {"class", TokenType::CLASS},
@@ -311,6 +311,15 @@ int main(int argc, char *argv[])
     if (argc == 2)
     {
         Scanner::scan(Tools::file2string(argv[1]));
+    } else if (argc == 1)
+    {
+        std::cout << "> ";
+        for(std::string line; std::getline(std::cin, line);)
+        {
+            Scanner::scan(line);
+            std::cout << "> ";
+        }
     }
+    
     return 0;
 }
