@@ -65,13 +65,13 @@ namespace Spec {
         }
 
 
-        Expression Unary(Token p_op, Expression *p_expr)
+        Expression Unary(Token p_op, Expression *p_expr) noexcept
         {
             return {ExpressionType::UNARY, p_op, nullptr, p_expr};
         }
 
 
-        Expression Literal(Token p_literal)
+        Expression Literal(Token p_literal) noexcept
         {
             return {ExpressionType::LITERAL, p_literal, nullptr, nullptr};
         }
