@@ -272,19 +272,30 @@ namespace Scanner
                 
                 case '0': case '1': case '2': case '3': case '4': 
                 case '5': case '6': case '7': case '8': case '9':
-                    while (std::isdigit(consume()))
+                    { // Prevent automatic storage duration issue with local scope
+                    std::string _literal {c};
+
+                    while (std::isdigit(consume()) || c == '_') 
+                    {
+                        if (c != '_') _literal += c;
                         lexeme_buf += c;
+                    }
 
                     // Is a decimal
                     if(c == '.')
                     {
                         lexeme_buf += c;
+                        _literal += c;
 
-                        while (std::isdigit(consume()))
+                        while (std::isdigit(consume())) 
+                        {
                             lexeme_buf += c;
+                            _literal += c;
+                        }
                     }
 
-                    add_token(TokenType::NUMBER, lexeme_buf);
+                    add_token(TokenType::NUMBER, _literal);
+                    }
 
                     break;
 
