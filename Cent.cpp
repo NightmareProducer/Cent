@@ -99,8 +99,8 @@ namespace Spec {
 
             switch (p_op)
             {
-                case UnaryOp::NOT: op = "!"; break;
-                case UnaryOp::MINUS: op = "-"; break;
+                case UnaryOp::NOT:      op = "!"; break;
+                case UnaryOp::MINUS:    op = "-"; break;
             }
 
             return {ExpressionType::UNARY, op + p_expr};
