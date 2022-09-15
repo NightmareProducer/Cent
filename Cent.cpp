@@ -175,8 +175,9 @@ namespace Tools {
 namespace Scanner 
 {
     using namespace Spec;
+    using TokenList = std::vector<Token>;
 
-    std::vector<Token> scan(std::string p_source) noexcept
+    TokenList scan(std::string p_source) noexcept
     {
         int s_linenum {0};
         int s_column {0};
