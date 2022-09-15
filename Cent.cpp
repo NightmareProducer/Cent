@@ -46,88 +46,34 @@ namespace Spec {
     { 
         enum class ExpressionType 
         {
-            NUMBER, STRING, BOOL, NIL, 
-            UNARY, BINARY, GROUPING, OPERATOR
+            LITERAL, UNARY, BINARY, GROUPING, OPERATOR
         };
 
 
         struct Expression
         {
             ExpressionType type;
-            std::string content;
+            Token content;
+            Expression *left;
+            Expression *right;
         };
 
 
-        enum class BinaryOp 
+        Expression Binary(Expression *p_left, Token p_op, Expression *p_right) noexcept
         {
-            // Arith
-            MUL, DIV, PLUS, MINUS,                              
-
-            // Logical
-            EQUAL, NOT_EQ, 
-            GREATER, GREATER_EQ, 
-            LESS, LESS_EQ,   
-        };
-
-        enum class UnaryOp {NOT, MINUS};
-
-
-        Expression Binary(Expression p_left, BinaryOp p_op, Expression p_right) noexcept
-        {
-            std::string op;
-            switch (p_op)
-            {
-                case BinaryOp::MUL:         op = "*"; break;
-                case BinaryOp::DIV:         op = "/"; break;
-                case BinaryOp::PLUS:        op = "+"; break;
-                case BinaryOp::MINUS:       op = "-"; break;
-                case BinaryOp::EQUAL:       op = "="; break;
-                case BinaryOp::NOT_EQ:      op = "!="; break;
-                case BinaryOp::GREATER:     op = ">"; break;
-                case BinaryOp::GREATER_EQ:  op =">="; break;
-                case BinaryOp::LESS:        op = "<"; break;
-                case BinaryOp::LESS_EQ:     op = "<="; break;
-            }
-
-            return {ExpressionType::BINARY, p_left.content + op + p_right.content};
+            return {ExpressionType::BINARY, p_op, p_left, p_right};
         }
 
 
-        Expression Unary(UnaryOp p_op, Expression p_expr)
+        Expression Unary(Token p_op, Expression *p_expr)
         {
-            std::string op;
-
-            switch (p_op)
-            {
-                case UnaryOp::NOT:      op = "!"; break;
-                case UnaryOp::MINUS:    op = "-"; break;
-            }
-
-            return {ExpressionType::UNARY, op + p_expr};
+            return {ExpressionType::UNARY, p_op, nullptr, p_expr};
         }
 
 
-        Expression Number(double num)
+        Expression Literal(Token p_literal)
         {
-            return {ExpressionType::NUMBER, std::to_string(num)};
-        }
-
-        
-        Expression String(std::string str)
-        {
-            return {ExpressionType::STRING, str};
-        }
-
-
-        Expression Bool(bool boolean)
-        {
-            return {ExpressionType::BOOL, std::to_string(boolean)};
-        }
-
-
-        Expression Nil()
-        {
-            return {ExpressionType::NIL, "nil"};
+            return {ExpressionType::LITERAL, p_literal, nullptr, nullptr};
         }
     }
 
