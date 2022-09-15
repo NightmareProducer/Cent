@@ -33,6 +33,7 @@ namespace Spec {
         ENOF
     };
 
+
     struct Token 
     {
         int line;
@@ -41,31 +42,121 @@ namespace Spec {
         std::string lexeme;
     };
 
-    namespace 
-    {
-        std::unordered_map<std::string_view, TokenType> s_reserved {
-            {"and", TokenType::AND},
-            {"or", TokenType::OR},
-            {"class", TokenType::CLASS},
-            {"if", TokenType::IF},
-            {"else", TokenType::ELSE},
-            {"var", TokenType::VAR},
-            {"func", TokenType::FUNC},
-            {"for", TokenType::FOR},
-            {"while", TokenType::WHILE},
-            {"return", TokenType::RETURN},
-            {"super", TokenType::SUPER},
-            {"this", TokenType::THIS},
-            {"print", TokenType::PRINT},
-            {"nil", TokenType::NIL},
-            {"true", TokenType::TRUE},
-            {"false", TokenType::FALSE},
+    namespace Expr 
+    { 
+        enum class ExpressionType 
+        {
+            NUMBER, STRING, BOOL, NIL, 
+            UNARY, BINARY, GROUPING, OPERATOR
         };
+
+
+        struct Expression
+        {
+            ExpressionType type;
+            std::string content;
+        };
+
+
+        enum class BinaryOp 
+        {
+            // Arith
+            MUL, DIV, PLUS, MINUS,                              
+
+            // Logical
+            EQUAL, NOT_EQ, 
+            GREATER, GREATER_EQ, 
+            LESS, LESS_EQ,   
+        };
+
+        enum class UnaryOp {NOT, MINUS};
+
+
+        Expression Binary(Expression p_left, BinaryOp p_op, Expression p_right) noexcept
+        {
+            std::string op;
+            switch (p_op)
+            {
+                case BinaryOp::MUL:         op = "*"; break;
+                case BinaryOp::DIV:         op = "/"; break;
+                case BinaryOp::PLUS:        op = "+"; break;
+                case BinaryOp::MINUS:       op = "-"; break;
+                case BinaryOp::EQUAL:       op = "="; break;
+                case BinaryOp::NOT_EQ:      op = "!="; break;
+                case BinaryOp::GREATER:     op = ">"; break;
+                case BinaryOp::GREATER_EQ:  op =">="; break;
+                case BinaryOp::LESS:        op = "<"; break;
+                case BinaryOp::LESS_EQ:     op = "<="; break;
+            }
+
+            return {ExpressionType::BINARY, p_left.content + op + p_right.content};
+        }
+
+
+        Expression Unary(UnaryOp p_op, Expression p_expr)
+        {
+            std::string op;
+
+            switch (p_op)
+            {
+                case UnaryOp::NOT: op = "!"; break;
+                case UnaryOp::MINUS: op = "-"; break;
+            }
+
+            return {ExpressionType::UNARY, op + p_expr};
+        }
+
+
+        Expression Number(double num)
+        {
+            return {ExpressionType::NUMBER, std::to_string(num)};
+        }
+
+        
+        Expression String(std::string str)
+        {
+            return {ExpressionType::STRING, str};
+        }
+
+
+        Expression Bool(bool boolean)
+        {
+            return {ExpressionType::BOOL, std::to_string(boolean)};
+        }
+
+
+        Expression Nil()
+        {
+            return {ExpressionType::NIL, "nil"};
+        }
     }
 
-    inline TokenType reserved(std::string_view word) noexcept { 
+
+    std::unordered_map<std::string_view, TokenType> s_reserved {
+        {"and", TokenType::AND},
+        {"or", TokenType::OR},
+        {"class", TokenType::CLASS},
+        {"if", TokenType::IF},
+        {"else", TokenType::ELSE},
+        {"var", TokenType::VAR},
+        {"func", TokenType::FUNC},
+        {"for", TokenType::FOR},
+        {"while", TokenType::WHILE},
+        {"return", TokenType::RETURN},
+        {"super", TokenType::SUPER},
+        {"this", TokenType::THIS},
+        {"print", TokenType::PRINT},
+        {"nil", TokenType::NIL},
+        {"true", TokenType::TRUE},
+        {"false", TokenType::FALSE},
+    };
+
+
+    TokenType reserved(std::string_view word) noexcept 
+    { 
         try 
         {
+            Spec::s_reserved;
             return s_reserved.at(word);
         } 
         catch(const std::out_of_range& e)
@@ -82,18 +173,15 @@ namespace ERRHAND
 
     namespace Queue
     {
-        namespace 
+        struct Errors 
         {
-            struct Errors 
-            {
-                int line;
-                int column;
-                Phase phase;
-                std::string reason;
-            };
+            int line;
+            int column;
+            Phase phase;
+            std::string reason;
+        };
 
-            std::queue<Errors> s_errors;
-        }
+        std::queue<Errors> s_errors;
 
         void push(int p_line, int p_column, std::string p_reason, Phase p_phase) noexcept
         {
