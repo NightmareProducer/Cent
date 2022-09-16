@@ -2,9 +2,33 @@
 #include "Token.h"
 #include "Error.h"
 
+#include <cctype>
+#include <fstream>
+
 
 namespace Cent
 {
+    namespace Tool
+    {
+        std::string file2string(std::string p_fp)
+        {
+            std::ifstream f(p_fp, std::ios::in | std::ios::binary);
+            if (f.is_open()) 
+            {
+                std::string content;
+
+                // Get file length
+                f.seekg(0, std::ios::end);
+                content.resize(f.tellg());
+                f.seekg(0, std::ios::beg);
+
+                f.read(&content[0], content.size());
+                return content;
+            }
+            throw errno;
+        }
+    }
+
     namespace Scanner 
     {
         using namespace Cent::Type;
@@ -25,7 +49,7 @@ namespace Cent
 
                 const auto add_token = [&](TokenType p_type, std::string p_literal = "")
                 {
-                    tokens.push_back(new TokenData{s_linenum, p_type, p_literal, lexeme_buf});
+                    tokens.push_back(Token(p_type, lexeme_buf, p_literal, s_linenum));
                 };
 
                 const auto at_end = [&index, &p_source]() 
