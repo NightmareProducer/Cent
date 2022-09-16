@@ -7,6 +7,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <queue>
+#include <variant>
 
 
 namespace Spec {
@@ -34,7 +35,7 @@ namespace Spec {
     };
 
 
-    struct Token 
+    struct TokenData 
     {
         int line;
         TokenType type;
@@ -42,38 +43,52 @@ namespace Spec {
         std::string lexeme;
     };
 
+
+    TokenData* Token(TokenType p_type, std::string p_lexeme, std::string p_literal,int p_line = -1)
+    {
+        return new TokenData{p_line, p_type, p_literal, p_lexeme};
+    }
+
+
     namespace Expr 
-    { 
+    {
         enum class ExpressionType 
         {
-            LITERAL, UNARY, BINARY, GROUPING, OPERATOR
+            LITERAL, UNARY, BINARY, GROUPING
         };
 
 
-        struct Expression
+        struct ExpressionData
         {
             ExpressionType type;
-            Token content;
-            Expression *left;
-            Expression *right;
+            TokenData *content_token = nullptr;
+            ExpressionData *content_expr = nullptr;
+            ExpressionData *left = nullptr;
+            ExpressionData *right = nullptr;
         };
 
 
-        Expression Binary(Expression *p_left, Token p_op, Expression *p_right) noexcept
+        inline auto Binary(ExpressionData *p_left, TokenData *p_op, ExpressionData *p_right) noexcept
         {
-            return {ExpressionType::BINARY, p_op, p_left, p_right};
+            return new ExpressionData{ExpressionType::BINARY, p_op, nullptr, p_left, p_right};
         }
 
 
-        Expression Unary(Token p_op, Expression *p_expr) noexcept
+        inline auto Unary(TokenData *p_op, ExpressionData *p_expr) noexcept
         {
-            return {ExpressionType::UNARY, p_op, nullptr, p_expr};
+            return new ExpressionData{ExpressionType::UNARY, p_op, nullptr, nullptr, p_expr};
         }
 
 
-        Expression Literal(Token p_literal) noexcept
+        inline auto Grouping(ExpressionData *p_expr) noexcept
         {
-            return {ExpressionType::LITERAL, p_literal, nullptr, nullptr};
+            return new ExpressionData{ExpressionType::GROUPING, nullptr, p_expr};
+        }
+
+
+        inline auto Literal(TokenData *p_literal) noexcept
+        {
+            return new ExpressionData{ExpressionType::LITERAL, p_literal};
         }
     }
 
@@ -151,7 +166,7 @@ namespace ERRHAND
 }
 
 
-namespace Tools {
+namespace Tool {
     std::string file2string(std::string p_fp)
     {
         std::ifstream f(p_fp, std::ios::in | std::ios::binary);
@@ -169,19 +184,50 @@ namespace Tools {
         }
         throw errno;
     }
+
+
+    void pretty_print(const Spec::Expr::ExpressionData* expr)
+    {
+        using namespace Spec::Expr;
+
+        if (!expr) return;
+
+        switch(expr->type)
+        {
+            case ExpressionType::LITERAL:
+                std::cout << expr->content_token->lexeme;
+                break;
+            case ExpressionType::UNARY:
+                std::cout << "(" << expr->content_token->lexeme;
+                pretty_print(expr->right);
+                std::cout << ")";
+                break;
+            case ExpressionType::GROUPING:
+                std::cout << "(";
+                pretty_print(expr->content_expr);
+                std::cout << ")";
+                break;
+            case ExpressionType::BINARY:
+                std::cout << "(" << expr->content_token->lexeme;
+                pretty_print(expr->left);
+                pretty_print(expr->right);
+                std::cout << ")";
+                break;
+        }
+    }
 }
 
 
 namespace Scanner 
 {
     using namespace Spec;
-    using TokenList = std::vector<Token>;
+    using TokenList = std::vector<TokenData*>;
 
     TokenList scan(std::string p_source) noexcept
     {
         int s_linenum {0};
         int s_column {0};
-        std::vector<Token> tokens;
+        std::vector<TokenData*> tokens;
 
         for(std::size_t i = 0; i < p_source.length(); ++i) 
         {
@@ -191,7 +237,7 @@ namespace Scanner
 
             const auto add_token = [&](TokenType p_type, std::string p_literal = "")
             {
-                tokens.emplace_back(s_linenum, p_type, p_literal, lexeme_buf);
+                 tokens.push_back(new TokenData{s_linenum, p_type, p_literal, lexeme_buf});
             };
 
             const auto at_end = [&i, &p_source]() 
@@ -354,9 +400,26 @@ namespace Scanner
 
 int main(int argc, char *argv[]) 
 {
+    Tool::pretty_print(
+        Spec::Expr::Binary(
+            Spec::Expr::Unary(
+                Spec::Token(Spec::TokenType::MINUS, "-", ""),
+                Spec::Expr::Literal(Spec::Token(Spec::TokenType::NUMBER, "\"123\"", "123"))
+            ),
+            Spec::Token(Spec::TokenType::STAR, "*", ""),
+            Spec::Expr::Grouping(
+                Spec::Expr::Literal(Spec::Token(Spec::TokenType::NUMBER, "\"4444\"", "4444"))
+            )
+        )
+    );
+
     if (argc == 2)
     {
-        Scanner::scan(Tools::file2string(argv[1]));
+       auto Tokens = Scanner::scan(Tool::file2string(argv[1]));
+
+        for(auto token : Tokens)
+            delete token;
+
     } else if (argc == 1)
     {
         std::cout << "> ";
