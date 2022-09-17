@@ -3,24 +3,23 @@
 #include <iostream>
 #include <string>
 
+
 int main(int argc, char *argv[]) 
 {
     using namespace Cent;
 
-    // Tool::pretty_print(
-    //     Binary(
-    //         Unary(
-    //             Token(Constant::TokenType::MINUS, "-", "", 1),
-    //             Literal(Token(Constant::TokenType::NUMBER, "\"123\"", "123", 1))
-    //         ),
-    //         Token(Constant::TokenType::STAR, "*", "", 1),
-    //         Grouping(
-    //             Literal(Token(Constant::TokenType::NUMBER, "\"4444\"", "4444", 1))
-    //         )
-    //     )
-    // );
-
-
+    Tool::pretty_print(
+        Binary(
+            Unary(
+                Token(Constant::TokenType::MINUS, "-", "", 1),
+                Literal(Token(Constant::TokenType::NUMBER, "\"123\"", "123", 1))
+            ),
+            Token(Constant::TokenType::STAR, "*", "", 1),
+            Grouping(
+                Literal(Token(Constant::TokenType::NUMBER, "\"4444\"", "4444", 1))
+            )
+        )
+    );
 
 
     if (argc == 2)

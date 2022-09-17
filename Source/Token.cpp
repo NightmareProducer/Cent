@@ -6,6 +6,7 @@
 using namespace Cent::Constant;
 
 
+// Static variables
 static std::unordered_map 
     <std::string_view, TokenType> s_reserved 
 {
@@ -26,26 +27,27 @@ static std::unordered_map
     {"true", TokenType::TRUE},
     {"false", TokenType::FALSE},
 };
+//// end static variables
 
-
-namespace Cent
+namespace Cent::Tool
 {
-    namespace Tool
-    {
-        Constant::TokenType reserved(std::string_view word) noexcept 
-        { 
-            try 
-            {
-                return s_reserved.at(word);
-            } 
-            catch(const std::out_of_range& e)
-            {
-                return TokenType::IDENTIFIER;
-            }
+    Constant::TokenType reserved(std::string_view word) noexcept 
+    { 
+        try 
+        {
+            return s_reserved.at(word);
+        } 
+        catch(const std::out_of_range& e)
+        {
+            return TokenType::IDENTIFIER;
         }
-    } // namespace Tool
+    }
+
+} // namespace Tool
 
 
+namespace Cent // External Functions
+{
     Type::TokenData* Token(Constant::TokenType p_type, std::string p_lexeme, std::string p_literal, int p_line)
     {
         return new Type::TokenData{p_line, p_type, p_literal, p_lexeme};
