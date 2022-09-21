@@ -32,7 +32,6 @@ namespace Cent::Scanner
 {
     using namespace Cent::Type;
     using namespace Cent::Constant;
-    using TokenList = std::vector<TokenData*>;
 
     TokenList scan(std::string p_source) noexcept
     {
@@ -48,7 +47,7 @@ namespace Cent::Scanner
 
             const auto add_token = [&](TokenType p_type, std::string p_literal = "")
             {
-                tokens.push_back(Token(p_type, lexeme_buf, p_literal, s_linenum));
+                tokens.push_back(Token(p_type, lexeme_buf, p_literal, s_linenum, s_column));
             };
 
             const auto at_end = [&index, &p_source]() 
@@ -141,7 +140,7 @@ namespace Cent::Scanner
 
                     // No closing string literal found
                     if(c == EOF) {
-                        Tool::enqueue_error(s_linenum, s_column, "Unterminated string", Constant::Phase::SCANNING);
+                        Cent::Error::enqueue(s_linenum, s_column, "Unterminated string", Constant::Phase::SCANNING);
                         break;
                     }
 

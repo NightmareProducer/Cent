@@ -2,12 +2,14 @@
 
 #include <iostream>
 #include <string>
+#include <array>
+
+
+using namespace Cent;
 
 
 int main(int argc, char *argv[]) 
 {
-    using namespace Cent;
-
     Tool::pretty_print(
         Binary(
             Unary(

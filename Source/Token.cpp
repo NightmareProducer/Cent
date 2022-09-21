@@ -48,8 +48,8 @@ namespace Cent::Tool
 
 namespace Cent // External Functions
 {
-    Type::TokenData* Token(Constant::TokenType p_type, std::string p_lexeme, std::string p_literal, int p_line)
+    Type::TokenData* Token(Constant::TokenType p_type, std::string p_lexeme, std::string p_literal = "", int p_line = -1, int p_column = -1)
     {
-        return new Type::TokenData{p_line, p_type, p_literal, p_lexeme};
+        return new Type::TokenData{p_line, p_column, p_type, p_literal, p_lexeme};
     }
 } // namespace Cent

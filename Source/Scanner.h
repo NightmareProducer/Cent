@@ -16,9 +16,7 @@ namespace Cent
 
     namespace Scanner
     {
-        using TokenList = std::vector<Type::TokenData*>;
-
-        TokenList scan(std::string p_source) noexcept;
+        Type::TokenList scan(std::string p_source) noexcept;
     }
 }
 

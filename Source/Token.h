@@ -39,10 +39,16 @@ namespace Cent
         struct TokenData 
         {
             int line;
+            int column;
             Constant::TokenType type;
             std::string literal;
             std::string lexeme;
         };
+
+
+        // Alias
+        using TokenList = std::vector<Type::TokenData*>;
+        //// Alias
     } // namespace Type
 
 
@@ -52,7 +58,8 @@ namespace Cent
     }
 
 
-    Type::TokenData* Token(Constant::TokenType p_type, std::string p_lexeme, std::string p_literal, int p_line);
+    Type::TokenData* Token(Constant::TokenType p_type, 
+        std::string p_lexeme, std::string p_literal = "", int p_line = -1, int p_column = -1);
 }
 
 #endif

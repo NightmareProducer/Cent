@@ -7,7 +7,7 @@ namespace Cent
 {
     namespace Constant
     {
-        enum class Phase { SCANNING };
+        enum class Phase { SCANNING, PARSING };
     } // namespace Constant
 
     namespace Type
@@ -22,9 +22,9 @@ namespace Cent
     } // namespace Type
 
 
-    namespace Tool
+    namespace Error
     {
-        void enqueue_error(int p_line, int p_column, std::string p_reason, Constant::Phase p_phase) noexcept;
+        void enqueue(int p_line, int p_column, std::string p_reason, Constant::Phase p_phase) noexcept;
     } // namespace Tool
 } // namespace Error
 #endif

@@ -6,14 +6,14 @@
 using namespace Cent;
 
 
-// Static variables
+// { Static variables
 static std::queue<Type::Error> errors;
-//// End static variables
+//// } End static variables
 
 
-namespace Cent::Tool
+namespace Cent::Error
 {
-    void enqueue_error(int p_line, int p_column, std::string p_reason, Constant::Phase p_phase) noexcept
+    void enqueue(int p_line, int p_column, std::string p_reason, Constant::Phase p_phase) noexcept
     {
         errors.emplace(p_line, p_column, p_phase, p_reason);
     }
