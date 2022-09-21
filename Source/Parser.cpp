@@ -212,16 +212,16 @@ namespace {
 
 
 // { Header Definitions
-namespace Cent
+namespace Cent::Parser
 {
-    void Parser::parse(Type::TokenList &p_tokens) noexcept
+    Type::ExpressionData* Parser::parse(Type::TokenList &p_tokens) noexcept
     {
         s_index = 0;
         s_tokens = &p_tokens;
 
         if(p_tokens.empty()) return;
 
-        expression(current_token());
+        return expression(current_token());
     }
 } // namespace Cent
 /// } Headere Definitions
