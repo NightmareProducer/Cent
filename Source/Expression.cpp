@@ -5,33 +5,38 @@
 
 namespace Cent::Tool
 {
-    void pretty_print(const Type::ExpressionData* expr)
+    void pretty_print(const Type::ExpressionData* p_expr)
     {
         using namespace Cent::Constant;
-        if (!expr) return;
+        if (!p_expr) return;
 
-        switch(expr->type)
+        switch(p_expr->type)
         {
             case ExpressionType::LITERAL:
-                std::cout << expr->content_token->lexeme;
+                std::cout << p_expr->content_token->lexeme;
                 break;
             case ExpressionType::UNARY:
-                std::cout << "(" << expr->content_token->lexeme;
-                pretty_print(expr->right);
+                std::cout << "(" << p_expr->content_token->lexeme;
+                pretty_print(p_expr->right);
                 std::cout << ")";
                 break;
             case ExpressionType::GROUPING:
                 std::cout << "(";
-                pretty_print(expr->content_expr);
+                pretty_print(p_expr->content_expr);
                 std::cout << ")";
                 break;
             case ExpressionType::BINARY:
-                std::cout << "(" << expr->content_token->lexeme;
-                pretty_print(expr->left);
-                pretty_print(expr->right);
+                std::cout << "(" << p_expr->content_token->lexeme;
+                pretty_print(p_expr->left);
+                pretty_print(p_expr->right);
                 std::cout << ")";
                 break;
         }
+    }
+
+    bool is_valid_expr(const Type::ExpressionData* p_expr)
+    {
+        return p_expr->type == Constant::ExpressionType::INVALID;
     }
 } // namespace Tool
 
@@ -56,5 +61,10 @@ namespace Cent // External Functions
     Type::ExpressionData* Literal(Type::TokenData *p_literal) noexcept
     {
         return new Type::ExpressionData{Constant::ExpressionType::LITERAL, p_literal};
+    }
+
+    Type::ExpressionData* InvalidExpr(Type::TokenData *p_token) noexcept
+    {
+        return new Type::ExpressionData{Constant::ExpressionType::INVALID, p_token};
     }
 } // namespace Cent

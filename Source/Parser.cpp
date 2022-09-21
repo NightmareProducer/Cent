@@ -175,6 +175,13 @@ namespace {
 
             return Grouping(expr);
         }
+
+        Cent::Error::enqueue(current_token()->line, 
+                             current_token()->column, 
+                             "Unrecognised Expression: " + current_token()->lexeme, 
+                             Phase::PARSING);
+
+        return InvalidExpr(p_token);
     }
 
     template<TokenTypes... T>

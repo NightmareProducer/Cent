@@ -9,7 +9,7 @@ namespace Cent
     {
         enum class ExpressionType 
         {
-            LITERAL, UNARY, BINARY, GROUPING
+            LITERAL, UNARY, BINARY, GROUPING, INVALID
         };
     } // namespace Constant
 
@@ -31,7 +31,9 @@ namespace Cent
     {
         /// @brief Prints the syntax tree of an expression to standard output
         /// @param expr Expression to be printed
-        void pretty_print(const Type::ExpressionData* expr);
+        void pretty_print(const Type::ExpressionData* p_expr);
+
+        bool is_valid_expr(const Type::ExpressionData* p_expr);
     } // namespace Tool
 
 
@@ -54,6 +56,7 @@ namespace Cent
     /// @param p_literal The token literal value
     /// @return Expression data with type field set to LITERAL
     Type::ExpressionData* Literal(Type::TokenData *p_literal) noexcept;
+    Type::ExpressionData* InvalidExpr(Type::TokenData *p_token) noexcept;
 } // namespace Cent
 
 #endif
