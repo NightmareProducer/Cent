@@ -31,12 +31,26 @@ namespace {
 
     // { Static Function Declarations
 
+    /// @brief Rule: expression -> equality
+    /// @param p_token The token to be match with a producer 
     ExpressionData* expression(TokenData* p_token) noexcept;
+    /// @brief Rule: equality -> comparison ( ( "!=" | "==" ) comparison )*;
+    /// @param p_token The token to be match with a producer 
     ExpressionData* equality(TokenData* p_token)  noexcept;
+    /// @brief Rule: comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )*;
+    /// @param p_token The token to be match with a producer 
     ExpressionData* comparison(TokenData* p_token) noexcept;
+    /// @brief Rule: term -> factor ( ( "-" | "+" ) factor )*;
+    /// @param p_token The token to be match with a producer 
     ExpressionData* term(TokenData* p_token) noexcept;
+    /// @brief Rule: factor -> unary ( ( "*" | "/" ) unary )*;
+    /// @param p_token The token to be match with a producer 
     ExpressionData* factor(TokenData* p_token) noexcept;
+    /// @brief Rule: unary -> ( "!" | "-" ) unary | primary;
+    /// @param p_token The token to be match with a producer 
     ExpressionData* unary(TokenData* p_token) noexcept;
+    /// @brief Rule: NUMBER | STRING | "true" | "false" | "nil" | "(" EXPRESSION ")";
+    /// @param p_token The token to be match with a producer 
     ExpressionData* primary(TokenData* p_token) noexcept;
  
     /// @brief Check wether the token matches any of the specified token types.
