@@ -3,5 +3,10 @@ t_*
 *.ilk
 *.pdb
 *.obj
+*.vcxproj*
+*.cmake
 
+CMakeFiles/
 .vscode/
+Build/
+CMakeCache.txt

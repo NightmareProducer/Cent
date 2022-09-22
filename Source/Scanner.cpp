@@ -199,7 +199,7 @@ namespace Cent::Scanner
 
                     add_token(Tool::reserved(lexeme_buf));
                     } else
-                        Tool::enqueue_error(s_linenum, s_column, "Unrecognize Character", Constant::Phase::SCANNING);
+                        Error::enqueue(s_linenum, s_column, "Unrecognize Character", Constant::Phase::SCANNING);
             }
         }
 

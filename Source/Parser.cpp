@@ -1,5 +1,4 @@
 #include "Parser.h"
-#include "Expressions.h"
 #include "Error.h"
 
 #include <concepts>
@@ -59,16 +58,16 @@ namespace {
     /// @param ...p_types Token types to be matched with
     /// @return true if token matched any of the specified type, false otherwise
     template<TokenTypes... T>
-    bool match(TokenData &p_token, T... p_types);
+    bool match(TokenData *p_token, T... p_types);
     /// @brief Checks whether we are at the end of the token_list
     /// @return true if s_index >= s_tokens->size(), false otherwise
     inline bool at_end();
     /// @brief Increments the index
     inline void next();
     /// @brief Returns the token at the current index
-    inline TokenData* current_token();
+    TokenData* current_token();
     /// @brief Increments the index and returns the token
-    inline TokenData* next_token();
+    TokenData* next_token();
 
     //// } Static Functions Declarations 
 
@@ -158,6 +157,7 @@ namespace {
 
     ExpressionData* primary(Type::TokenData* p_token) noexcept
     {
+        using namespace Cent::Constant;
         using enum Cent::Constant::TokenType;
 
         if(match(p_token, FALSE, TRUE, STRING, NUMBER))
@@ -204,8 +204,8 @@ namespace {
 
     inline void next() {++s_index;} 
 
-    inline TokenData* current_token() { return (*s_tokens)[s_index]; }
-    inline TokenData* next_token() { return (*s_tokens)[++s_index]; }
+    TokenData* current_token() { return (*s_tokens)[s_index]; }
+    TokenData* next_token() { return (*s_tokens)[++s_index]; }
 //// } Static Function Definitions 
 }
 //// } Static Definitions 
@@ -218,8 +218,6 @@ namespace Cent::Parser
     {
         s_index = 0;
         s_tokens = &p_tokens;
-
-        if(p_tokens.empty()) return;
 
         return expression(current_token());
     }

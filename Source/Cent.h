@@ -2,7 +2,9 @@
 #define CENT
 
 #include "Token.h"
-#include "Scanner.h"
 #include "Expressions.h"
+#include "Scanner.h"
+#include "Parser.h"
+#include "Error.h"
 
 #endif

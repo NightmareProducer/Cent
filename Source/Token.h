@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <string_view>
 
 
 namespace Cent
@@ -58,8 +59,7 @@ namespace Cent
     }
 
 
-    Type::TokenData* Token(Constant::TokenType p_type, 
-        std::string p_lexeme, std::string p_literal = "", int p_line = -1, int p_column = -1);
+    Type::TokenData* Token(Constant::TokenType p_type, std::string p_lexeme, std::string p_literal, int p_line, int p_column);
 }
 
 #endif

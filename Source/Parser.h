@@ -1,5 +1,5 @@
 #ifndef CENT_PARSER
-#define PARSER
+#define CENT_PARSER
 
 #include "Token.h"
 #include "Expressions.h"
