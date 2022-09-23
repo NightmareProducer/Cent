@@ -36,7 +36,7 @@ namespace Cent::Tool
 
     bool is_valid_expr(const Type::ExpressionData* p_expr)
     {
-        return p_expr->type == Constant::ExpressionType::INVALID;
+        return p_expr->type != Constant::ExpressionType::INVALID;
     }
 } // namespace Tool
 
