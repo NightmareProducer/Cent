@@ -204,8 +204,16 @@ namespace {
 
     inline void next() {++s_index;} 
 
-    TokenData* current_token() { return (*s_tokens)[s_index]; }
-    TokenData* next_token() { return (*s_tokens)[++s_index]; }
+    TokenData* current_token() 
+    { 
+        if(!at_end()) return (*s_tokens)[s_index];
+        return nullptr;
+    }
+
+    TokenData* next_token() { 
+        if(!at_end()) return (*s_tokens)[++s_index]; 
+        return nullptr;
+    }
 //// } Static Function Definitions 
 }
 //// } Static Definitions 
