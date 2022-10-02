@@ -43,12 +43,12 @@ namespace Cent::Tool
 
 namespace Cent // External Functions
 {
-    Type::ExpressionData* Binary(Type::ExpressionData *p_left, Type::TokenData *p_op, Type::ExpressionData *p_right) noexcept
+    Type::ExpressionData* Binary(Type::ExpressionData *p_left, Type::TokenShared p_op, Type::ExpressionData *p_right) noexcept
     {
         return new Type::ExpressionData{Constant::ExpressionType::BINARY, p_op, nullptr, p_left, p_right};
     }
 
-    Type::ExpressionData* Unary(Type::TokenData *p_op, Type::ExpressionData *p_expr) noexcept
+    Type::ExpressionData* Unary(Type::TokenShared p_op, Type::ExpressionData *p_expr) noexcept
     {
         return new Type::ExpressionData{Constant::ExpressionType::UNARY, p_op, nullptr, nullptr, p_expr};
     }
@@ -58,12 +58,12 @@ namespace Cent // External Functions
         return new Type::ExpressionData{Constant::ExpressionType::GROUPING, nullptr, p_expr};
     }
 
-    Type::ExpressionData* Literal(Type::TokenData *p_literal) noexcept
+    Type::ExpressionData* Literal(Type::TokenShared p_literal) noexcept
     {
         return new Type::ExpressionData{Constant::ExpressionType::LITERAL, p_literal};
     }
 
-    Type::ExpressionData* InvalidExpr(Type::TokenData *p_token) noexcept
+    Type::ExpressionData* InvalidExpr(Type::TokenShared p_token) noexcept
     {
         return new Type::ExpressionData{Constant::ExpressionType::INVALID, p_token};
     }

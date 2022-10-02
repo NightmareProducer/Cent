@@ -16,8 +16,6 @@ int main(int argc, char *argv[])
 
         auto tokens = Scanner::scan(content);
         auto expr = Parser::parse(tokens);
-        // auto x = Token(Constant::TokenType::AND, "aa", "aa", 3, 3);
-        // expr = Literal(x);
         if(Tool::is_valid_expr(expr))
             Tool::pretty_print(expr);
         else

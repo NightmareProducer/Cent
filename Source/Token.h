@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <string_view>
+#include <memory>
 
 
 namespace Cent
@@ -48,7 +49,11 @@ namespace Cent
 
 
         // Alias
-        using TokenList = std::vector<Type::TokenData*>;
+
+        using TokenPtr = std::unique_ptr<TokenData>;
+        using TokenShared = std::shared_ptr<TokenData>;
+        using TokenList = std::vector<TokenShared>;
+
         //// Alias
     } // namespace Type
 
@@ -58,8 +63,7 @@ namespace Cent
         Constant::TokenType reserved(std::string_view word) noexcept;
     }
 
-
-    Type::TokenData* Token(Constant::TokenType p_type, std::string p_lexeme, std::string p_literal, int p_line, int p_column);
+    Type::TokenPtr Token(Constant::TokenType p_type, std::string p_lexeme, std::string p_literal, int p_line, int p_column);
 }
 
 #endif
