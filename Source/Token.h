@@ -51,8 +51,8 @@ namespace Cent
         // Alias
 
         using TokenPtr = std::unique_ptr<TokenData>;
-        using TokenShared = std::shared_ptr<TokenData>;
-        using TokenList = std::vector<TokenShared>;
+        using TokenShrd = std::shared_ptr<TokenData>;
+        using TokenList = std::vector<TokenShrd>;
 
         //// Alias
     } // namespace Type

@@ -5,6 +5,7 @@
 #include "Expressions.h"
 
 #include <vector>
+#include <memory>
 
 namespace Cent
 {
@@ -22,17 +23,20 @@ namespace Cent
             float value_float;
             std::string value_str;
         };
+
+        using ValuePtr = std::unique_ptr<ValueData>;
+        using ValueShrd = std::unique_ptr<ValueData>;
     }
 
     namespace Parser
     {
-        Type::ExpressionShared parse(Type::TokenList p_tokens) noexcept;
-        Type::ValueData* evaluate_expr(Type::ExpressionData *p_expr) noexcept;
+        Type::ExpressionShrd parse(Type::TokenList p_tokens) noexcept;
+        Type::ValuePtr evaluate_expr(Type::ExpressionData *p_expr) noexcept;
     }
 
-    Type::ValueData Value(Constant::ValueType p_type, int p_value);
-    Type::ValueData Value(Constant::ValueType p_type, float p_value);
-    Type::ValueData Value(Constant::ValueType p_type, std::string p_value);
+    Type::ValuePtr Value(Constant::ValueType p_type, int p_value);
+    Type::ValuePtr Value(Constant::ValueType p_type, float p_value);
+    Type::ValuePtr Value(Constant::ValueType p_type, std::string p_value);
 }
 
 #endif

@@ -32,25 +32,25 @@ namespace {
 
     /// @brief Rule: expression -> equality
     /// @param p_token The token to be match with a producer 
-    ExpressionShared expression(TokenShared p_token) noexcept;
+    ExpressionShrd expression(TokenShrd p_token) noexcept;
     /// @brief Rule: equality -> comparison ( ( "!=" | "==" ) comparison )*;
     /// @param p_token The token to be match with a producer 
-    ExpressionShared equality(TokenShared p_token)  noexcept;
+    ExpressionShrd equality(TokenShrd p_token)  noexcept;
     /// @brief Rule: comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )*;
     /// @param p_token The token to be match with a producer 
-    ExpressionShared comparison(TokenShared p_token) noexcept;
+    ExpressionShrd comparison(TokenShrd p_token) noexcept;
     /// @brief Rule: term -> factor ( ( "-" | "+" ) factor )*;
     /// @param p_token The token to be match with a producer 
-    ExpressionShared term(TokenShared p_token) noexcept;
+    ExpressionShrd term(TokenShrd p_token) noexcept;
     /// @brief Rule: factor -> unary ( ( "*" | "/" ) unary )*;
     /// @param p_token The token to be match with a producer 
-    ExpressionShared factor(TokenShared p_token) noexcept;
+    ExpressionShrd factor(TokenShrd p_token) noexcept;
     /// @brief Rule: unary -> ( "!" | "-" ) unary | primary;
     /// @param p_token The token to be match with a producer 
-    ExpressionShared unary(TokenShared p_token) noexcept;
+    ExpressionShrd unary(TokenShrd p_token) noexcept;
     /// @brief Rule: NUMBER | STRING | "true" | "false" | "nil" | "(" EXPRESSION ")";
     /// @param p_token The token to be match with a producer 
-    ExpressionShared primary(TokenShared p_token) noexcept;
+    ExpressionShrd primary(TokenShrd p_token) noexcept;
  
     /// @brief Check wether the token matches any of the specified token types.
     /// @tparam ...T Enum TokenType
@@ -58,27 +58,27 @@ namespace {
     /// @param ...p_types Token types to be matched with
     /// @return true if token matched any of the specified type, false otherwise
     template<TokenTypes... T>
-    bool match(const TokenShared& p_token, T... p_types);
+    bool match(const TokenShrd& p_token, T... p_types);
     /// @brief Checks whether we are at the end of the token_list
     /// @return true if s_index >= s_tokens->size(), false otherwise
     inline bool at_end();
     /// @brief Increments the index
     inline void next();
     /// @brief Returns the token at the current index
-    TokenShared current_token();
+    TokenShrd current_token();
     /// @brief Increments the index and returns the token
-    TokenShared next_token();
+    TokenShrd next_token();
 
     //// } Static Functions Declarations 
 
 
     // { Static Function Definitions
-    ExpressionShared expression(TokenShared p_token) noexcept
+    ExpressionShrd expression(TokenShrd p_token) noexcept
     {
         return equality(p_token);
     }
 
-    ExpressionShared equality(TokenShared p_token)  noexcept
+    ExpressionShrd equality(TokenShrd p_token)  noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -94,7 +94,7 @@ namespace {
         return expr;
     }
 
-    ExpressionShared comparison(TokenShared p_token) noexcept
+    ExpressionShrd comparison(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -110,7 +110,7 @@ namespace {
         return expr;
     }
 
-    ExpressionShared term(TokenShared p_token) noexcept
+    ExpressionShrd term(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -126,7 +126,7 @@ namespace {
         return expr;
     }
 
-    ExpressionShared factor(TokenShared p_token) noexcept
+    ExpressionShrd factor(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -142,7 +142,7 @@ namespace {
         return expr;
     }
 
-    ExpressionShared unary(TokenShared p_token) noexcept
+    ExpressionShrd unary(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
         if(match(p_token, BANG, MINUS))
@@ -155,7 +155,7 @@ namespace {
         return primary(p_token);
     }
 
-    ExpressionShared primary(TokenShared p_token) noexcept
+    ExpressionShrd primary(TokenShrd p_token) noexcept
     {
         using namespace Cent::Constant;
         using enum Cent::Constant::TokenType;
@@ -185,7 +185,7 @@ namespace {
     }
 
     template<TokenTypes... T>
-    bool match(const TokenShared& p_token, T... p_types)
+    bool match(const TokenShrd& p_token, T... p_types)
     {
         if(at_end()) 
             return false;
@@ -204,13 +204,13 @@ namespace {
 
     inline void next() {++s_index;} 
 
-    TokenShared current_token() 
+    TokenShrd current_token() 
     { 
         if(!at_end()) return (*s_tokens)[s_index];
         return nullptr;
     }
 
-    TokenShared next_token() { 
+    TokenShrd next_token() { 
         if(!at_end()) return (*s_tokens)[++s_index]; 
         return nullptr;
     }
@@ -222,7 +222,7 @@ namespace {
 // { Header Definitions
 namespace Cent::Parser
 {
-    Type::ExpressionShared parse(Type::TokenList p_tokens) noexcept
+    Type::ExpressionShrd parse(Type::TokenList p_tokens) noexcept
     {
         s_index = 0;
         s_tokens = &p_tokens;
@@ -234,7 +234,7 @@ namespace Cent::Parser
         return ret;
     }
 
-    Type::ValueData* evaluate_expr(Type::ExpressionData *p_expr) noexcept
+    Type::ValuePtr evaluate_expr(Type::ExpressionData *p_expr) noexcept
     {
         using namespace Cent::Constant;
 

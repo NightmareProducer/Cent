@@ -5,7 +5,7 @@
 
 namespace Cent::Tool
 {
-    void pretty_print(const Type::ExpressionShared& p_expr)
+    void pretty_print(const Type::ExpressionShrd& p_expr)
     {
         using namespace Cent::Constant;
         if (!p_expr) return;
@@ -34,7 +34,7 @@ namespace Cent::Tool
         }
     }
 
-    bool is_valid_expr(const Type::ExpressionShared& p_expr)
+    bool is_valid_expr(const Type::ExpressionShrd& p_expr)
     {
         return p_expr->type != Constant::ExpressionType::INVALID;
     }
@@ -43,31 +43,31 @@ namespace Cent::Tool
 
 namespace Cent // External Functions
 {
-    Type::ExpressionPtr Binary(Type::ExpressionShared p_left, Type::TokenShared p_op, Type::ExpressionShared p_right) noexcept
+    Type::ExpressionPtr Binary(Type::ExpressionShrd p_left, Type::TokenShrd p_op, Type::ExpressionShrd p_right) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::BINARY, p_op, nullptr, p_left, p_right});
     }
 
-    Type::ExpressionPtr Unary(Type::TokenShared p_op, Type::ExpressionShared p_expr) noexcept
+    Type::ExpressionPtr Unary(Type::TokenShrd p_op, Type::ExpressionShrd p_expr) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::UNARY, p_op, nullptr, nullptr, p_expr});
     }
 
-    Type::ExpressionPtr Grouping(Type::ExpressionShared p_expr) noexcept
+    Type::ExpressionPtr Grouping(Type::ExpressionShrd p_expr) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::GROUPING, nullptr, p_expr});
     }
 
-    Type::ExpressionPtr Literal(Type::TokenShared p_literal) noexcept
+    Type::ExpressionPtr Literal(Type::TokenShrd p_literal) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::LITERAL, p_literal});
     }
 
-    Type::ExpressionPtr InvalidExpr(Type::TokenShared p_token) noexcept
+    Type::ExpressionPtr InvalidExpr(Type::TokenShrd p_token) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::INVALID, p_token});
