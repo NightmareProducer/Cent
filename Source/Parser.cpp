@@ -160,7 +160,7 @@ namespace {
         using namespace Cent::Constant;
         using enum Cent::Constant::TokenType;
 
-        if(match(p_token, FALSE, TRUE, STRING, NUMBER))
+        if(match(p_token, FALSE, TRUE, STRING, INT, FLOAT))
             return (next(), Literal(p_token));
         
         if(match(p_token, LEFT_PAREN))
@@ -234,23 +234,40 @@ namespace Cent::Parser
         return ret;
     }
 
-    Type::ValuePtr evaluate_expr(Type::ExpressionData *p_expr) noexcept
+    Type::ValueData evaluate_expr(const Type::ExpressionShrd& p_expr) noexcept
     {
         using namespace Cent::Constant;
 
         switch (p_expr->type)
         {
         case ExpressionType::GROUPING:
-            break;
+            return evaluate_expr(p_expr->content_expr);
         case ExpressionType::BINARY: 
+            switch (p_expr->content_token->type)
+            {
+            case TokenType::PLUS:
+                return evaluate_expr(p_expr->left) + evaluate_expr(p_expr->right);
+            case TokenType::MINUS:
+                return evaluate_expr(p_expr->left) - evaluate_expr(p_expr->right);
+            }
+
             break;
         case ExpressionType::UNARY:
             break;
         case ExpressionType::LITERAL:
+            switch (p_expr->content_token->type)
+            {
+            case TokenType::STRING:
+                return String(p_expr->content_token->literal);
+            case TokenType::INT:
+                return Int(std::stoi(p_expr->content_token->literal));
+            case TokenType::FLOAT:
+                return Float(std::stof(p_expr->content_token->literal));
+            }
             break;
         }
 
-        return nullptr;
+        return {ValueType::INVALID};
     }
 } // namespace Cent
 /// } Headere Definitions

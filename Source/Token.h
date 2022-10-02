@@ -25,7 +25,7 @@ namespace Cent
             COMMENT,
 
             // LITERALS
-            IDENTIFIER, STRING, NUMBER, CHAR,
+            IDENTIFIER, STRING, CHAR, INT, FLOAT,
 
             // KEYWORDS
             AND, OR, CLASS, IF, ELSE, VAR, FUNC, FOR, WHILE,  

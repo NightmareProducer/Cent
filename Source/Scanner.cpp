@@ -165,6 +165,7 @@ namespace Cent::Scanner
                 case '5': case '6': case '7': case '8': case '9':
                     { // Prevent automatic storage duration issue with local scope
                     std::string _literal {c};
+                    auto _token_type = TokenType::INT;
 
                     while (std::isdigit(consume()) || c == '_') 
                     {
@@ -177,6 +178,7 @@ namespace Cent::Scanner
                     {
                         lexeme_buf += c;
                         _literal += c;
+                        _token_type = TokenType::FLOAT;
 
                         while (std::isdigit(consume())) 
                         {
@@ -185,7 +187,7 @@ namespace Cent::Scanner
                         }
                     }
 
-                    add_token(TokenType::NUMBER, _literal);
+                    add_token(_token_type, _literal);
                     }
 
                     break;
