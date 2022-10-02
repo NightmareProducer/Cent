@@ -26,7 +26,7 @@ namespace Cent
 
     namespace Parser
     {
-        Type::ExpressionData* parse(Type::TokenList p_tokens) noexcept;
+        Type::ExpressionShared parse(Type::TokenList p_tokens) noexcept;
         Type::ValueData* evaluate_expr(Type::ExpressionData *p_expr) noexcept;
     }
 

@@ -3,6 +3,8 @@
 
 #include "Token.h"
 
+#include <memory>
+
 namespace Cent
 {
     namespace Constant
@@ -20,10 +22,13 @@ namespace Cent
         {
             Constant::ExpressionType type;
             TokenShared content_token = nullptr;
-            ExpressionData *content_expr = nullptr;
-            ExpressionData *left = nullptr;
-            ExpressionData *right = nullptr;
+            std::shared_ptr<ExpressionData> content_expr = nullptr;
+            std::shared_ptr<ExpressionData> left = nullptr;
+            std::shared_ptr<ExpressionData> right = nullptr;
         };
+
+        using ExpressionPtr = std::unique_ptr<ExpressionData>;
+        using ExpressionShared = std::shared_ptr<ExpressionData>;
     } // namespace Type
 
 
@@ -31,9 +36,9 @@ namespace Cent
     {
         /// @brief Prints the syntax tree of an expression to standard output
         /// @param expr Expression to be printed
-        void pretty_print(const Type::ExpressionData* p_expr);
+        void pretty_print(const Type::ExpressionShared& p_expr);
 
-        bool is_valid_expr(const Type::ExpressionData* p_expr);
+        bool is_valid_expr(const Type::ExpressionShared& p_expr);
     } // namespace Tool
 
 
@@ -42,21 +47,25 @@ namespace Cent
     /// @param p_op The binary operator
     /// @param p_right The right operand
     /// @return Expression data with type field set to BINARY
-    Type::ExpressionData* Binary(Type::ExpressionData *p_left, Type::TokenShared p_op, Type::ExpressionData *p_right) noexcept;
+    Type::ExpressionPtr Binary(Type::ExpressionShared p_left, Type::TokenShared p_op, Type::ExpressionShared p_right) noexcept;
+
     /// @brief Construct an ExpressionData of type Unary
     /// @param p_op The unary operator
     /// @param p_expr The expression on the right side from the operand
     /// @return Expression data with type field set to UNARY
-    Type::ExpressionData* Unary(Type::TokenShared p_op, Type::ExpressionData *p_expr) noexcept;
+    Type::ExpressionPtr Unary(Type::TokenShared p_op, Type::ExpressionShared p_expr) noexcept;
+
     /// @brief Construct an ExpressionData of type Grouping
     /// @param p_expr 
     /// @return Expression data with type field set to Grouping
-    Type::ExpressionData* Grouping(Type::ExpressionData *p_expr) noexcept;
+    Type::ExpressionPtr Grouping(Type::ExpressionShared p_expr) noexcept;
+
     /// @brief Construct an ExpressionData of type Literal
     /// @param p_literal The token literal value
     /// @return Expression data with type field set to LITERAL
-    Type::ExpressionData* Literal(Type::TokenShared p_literal) noexcept;
-    Type::ExpressionData* InvalidExpr(Type::TokenShared p_token) noexcept;
+    Type::ExpressionPtr Literal(Type::TokenShared p_literal) noexcept;
+
+    Type::ExpressionPtr InvalidExpr(Type::TokenShared p_token) noexcept;
 } // namespace Cent
 
 #endif

@@ -5,7 +5,7 @@
 
 namespace Cent::Tool
 {
-    void pretty_print(const Type::ExpressionData* p_expr)
+    void pretty_print(const Type::ExpressionShared& p_expr)
     {
         using namespace Cent::Constant;
         if (!p_expr) return;
@@ -34,7 +34,7 @@ namespace Cent::Tool
         }
     }
 
-    bool is_valid_expr(const Type::ExpressionData* p_expr)
+    bool is_valid_expr(const Type::ExpressionShared& p_expr)
     {
         return p_expr->type != Constant::ExpressionType::INVALID;
     }
@@ -43,28 +43,33 @@ namespace Cent::Tool
 
 namespace Cent // External Functions
 {
-    Type::ExpressionData* Binary(Type::ExpressionData *p_left, Type::TokenShared p_op, Type::ExpressionData *p_right) noexcept
+    Type::ExpressionPtr Binary(Type::ExpressionShared p_left, Type::TokenShared p_op, Type::ExpressionShared p_right) noexcept
     {
-        return new Type::ExpressionData{Constant::ExpressionType::BINARY, p_op, nullptr, p_left, p_right};
+        return std::unique_ptr<Type::ExpressionData>(
+            new Type::ExpressionData{Constant::ExpressionType::BINARY, p_op, nullptr, p_left, p_right});
     }
 
-    Type::ExpressionData* Unary(Type::TokenShared p_op, Type::ExpressionData *p_expr) noexcept
+    Type::ExpressionPtr Unary(Type::TokenShared p_op, Type::ExpressionShared p_expr) noexcept
     {
-        return new Type::ExpressionData{Constant::ExpressionType::UNARY, p_op, nullptr, nullptr, p_expr};
+        return std::unique_ptr<Type::ExpressionData>(
+            new Type::ExpressionData{Constant::ExpressionType::UNARY, p_op, nullptr, nullptr, p_expr});
     }
 
-    Type::ExpressionData* Grouping(Type::ExpressionData *p_expr) noexcept
+    Type::ExpressionPtr Grouping(Type::ExpressionShared p_expr) noexcept
     {
-        return new Type::ExpressionData{Constant::ExpressionType::GROUPING, nullptr, p_expr};
+        return std::unique_ptr<Type::ExpressionData>(
+            new Type::ExpressionData{Constant::ExpressionType::GROUPING, nullptr, p_expr});
     }
 
-    Type::ExpressionData* Literal(Type::TokenShared p_literal) noexcept
+    Type::ExpressionPtr Literal(Type::TokenShared p_literal) noexcept
     {
-        return new Type::ExpressionData{Constant::ExpressionType::LITERAL, p_literal};
+        return std::unique_ptr<Type::ExpressionData>(
+            new Type::ExpressionData{Constant::ExpressionType::LITERAL, p_literal});
     }
 
-    Type::ExpressionData* InvalidExpr(Type::TokenShared p_token) noexcept
+    Type::ExpressionPtr InvalidExpr(Type::TokenShared p_token) noexcept
     {
-        return new Type::ExpressionData{Constant::ExpressionType::INVALID, p_token};
+        return std::unique_ptr<Type::ExpressionData>(
+            new Type::ExpressionData{Constant::ExpressionType::INVALID, p_token});
     }
 } // namespace Cent
