@@ -30,7 +30,7 @@ namespace Cent
     {
         using namespace Constant;
 
-        assert(("A and B must be of the same type", p_a.type == p_b.type));
+        if(p_a.type != p_b.type) goto ERR;
 
         switch (p_a.type)
         {
@@ -40,7 +40,7 @@ namespace Cent
             return Value(std::get<float>(p_a.content) * std::get<float>(p_b.content));
         }
     
-        return Type::ValueData{ValueType::INVALID};
+ERR:    return Type::ValueData{ValueType::INVALID};
     }
 
     Type::ValueData operator+ (const Type::ValueData &p_a, const Type::ValueData &p_b)
@@ -90,6 +90,20 @@ namespace Cent
             return Value(-std::get<int>(p_a.content));
         case ValueType::FLOAT:
             return Value(-std::get<float>(p_a.content));
+        }
+
+        return Type::ValueData{ValueType::INVALID};
+    }
+
+
+    Type::ValueData operator! (const Type::ValueData &p_a)
+    {
+        using namespace Constant;
+
+        switch (p_a.type)
+        {
+        case ValueType::BOOL:
+            return Value(!std::get<bool>(p_a.content));
         }
 
         return Type::ValueData{ValueType::INVALID};

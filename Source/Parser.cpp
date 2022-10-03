@@ -259,6 +259,7 @@ namespace Cent::Parser
             }
 
             break;
+
         case ExpressionType::UNARY:
         {
             auto right = evaluate_expr(p_expr->right);
@@ -266,9 +267,12 @@ namespace Cent::Parser
             {
             case TokenType::MINUS:
                 return -right;
+            case TokenType::BANG:
+                return !right;
             }
         }
             break;
+
         case ExpressionType::LITERAL:
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {

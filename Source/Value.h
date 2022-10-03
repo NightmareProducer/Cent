@@ -43,6 +43,7 @@ namespace Cent
     Type::ValueData operator+ (const Type::ValueData &p_a, const Type::ValueData &p_b);
     Type::ValueData operator- (const Type::ValueData &p_a, const Type::ValueData &p_b);
     Type::ValueData operator- (const Type::ValueData &p_a);
+    Type::ValueData operator! (const Type::ValueData &p_a);
 }
 
 #endif

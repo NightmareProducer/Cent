@@ -65,9 +65,11 @@ namespace Cent::Scanner
                 return (at_end()) ? (char) EOF : p_source[index + 1];
             };
 
-            const auto next_match = [&index, &consume, &at_end](char p_expected) 
+            const auto next_ifmatch = [&index, &consume, &at_end, &peek](char p_expected) 
             {
-                return (at_end()) ? false : consume() == p_expected;
+                if(at_end()) return false;
+                if(peek() == p_expected) return (consume(), true);
+                return false;
             };
 
             ++s_column;
@@ -107,7 +109,7 @@ namespace Cent::Scanner
 
 
                 case '/':
-                    if (next_match('/')) 
+                    if (next_ifmatch('/')) 
                     {
                         add_token(TokenType::COMMENT);
                         while(consume() != '\n');
@@ -117,16 +119,16 @@ namespace Cent::Scanner
 
                     break;
                 case '=':
-                    add_token(next_match('=') ? TokenType::EQUAL_EQ : TokenType::EQUAL);
+                    add_token(next_ifmatch('=') ? TokenType::EQUAL_EQ : TokenType::EQUAL);
                     break;
                 case '<':
-                    add_token(next_match('=') ? TokenType::LESS_EQ : TokenType::LESS);
+                    add_token(next_ifmatch('=') ? TokenType::LESS_EQ : TokenType::LESS);
                     break;
                 case '>':
-                    add_token(next_match('=') ? TokenType::GREATER_EQ : TokenType::GREATER);
+                    add_token(next_ifmatch('=') ? TokenType::GREATER_EQ : TokenType::GREATER);
                     break;
                 case '!':
-                    add_token(next_match('=') ? TokenType::BANG_EQ : TokenType::BANG);
+                    add_token(next_ifmatch('=') ? TokenType::BANG_EQ : TokenType::BANG);
                     break;
                 
 

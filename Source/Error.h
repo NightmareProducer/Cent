@@ -7,7 +7,7 @@ namespace Cent
 {
     namespace Constant
     {
-        enum class Phase { SCANNING, PARSING };
+        enum class Phase { SCANNING, PARSING, EVAL};
     } // namespace Constant
 
     namespace Type
