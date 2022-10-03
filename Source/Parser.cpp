@@ -254,8 +254,6 @@ namespace Cent::Parser
                 return evaluate_expr(p_expr->left) - evaluate_expr(p_expr->right);
             }
 
-            break;
-
         case ExpressionType::UNARY:
             break;
 
@@ -269,8 +267,6 @@ namespace Cent::Parser
             case TokenType::FLOAT:
                 return Value(std::stof(std::get<TokenShrd>(p_expr->content)->literal));
             }
-
-            break;
         }
 
         return {ValueType::INVALID};

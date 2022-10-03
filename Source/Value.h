@@ -22,9 +22,6 @@ namespace Cent
         {
             Constant::ValueType type = Constant::ValueType::INVALID;
             std::variant<int, float, std::string> content; 
-            /// @brief This field is only assigned when the ValueData is returned  
-            ///        from evaluate_expression and the .type field is set to Invalid.
-            ExprShrd eval_expr_err = nullptr; 
         };
     }
 
