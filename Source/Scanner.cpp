@@ -154,7 +154,7 @@ namespace Cent::Scanner
                 // Ignore white spaces
                 case ' ':
                 case '\r':
-                case 't':
+                case '\t':
                     break;
                 case '\n':
                     ++s_linenum;

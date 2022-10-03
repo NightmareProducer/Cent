@@ -20,6 +20,11 @@ namespace Cent
         return {Constant::ValueType::STRING, p_value};
     }
 
+    Type::ValueData Value(bool p_value)
+    {
+        return {Constant::ValueType::BOOL, p_value};
+    }
+
 
     Type::ValueData operator* (const Type::ValueData &p_a, const Type::ValueData &p_b)
     {

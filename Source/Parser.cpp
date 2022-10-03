@@ -215,6 +215,8 @@ namespace {
         if(!at_end()) return (*s_tokens)[++s_index]; 
         return nullptr;
     }
+
+    
 //// } Static Function Definitions 
 }
 //// } Static Definitions 
@@ -276,6 +278,10 @@ namespace Cent::Parser
                 return Value(std::stoi(std::get<TokenShrd>(p_expr->content)->literal));
             case TokenType::FLOAT:
                 return Value(std::stof(std::get<TokenShrd>(p_expr->content)->literal));
+            case TokenType::FALSE:
+                return Value(false);
+            case TokenType::TRUE:
+                return Value(true);
             }
 
             break;
