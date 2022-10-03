@@ -248,6 +248,8 @@ namespace Cent::Parser
         case ExpressionType::BINARY: 
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {
+            case TokenType::STAR:
+                return evaluate_expr(p_expr->left) * evaluate_expr(p_expr->right);
             case TokenType::PLUS:
                 return evaluate_expr(p_expr->left) + evaluate_expr(p_expr->right);
             case TokenType::MINUS:

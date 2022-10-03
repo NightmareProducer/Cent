@@ -20,6 +20,24 @@ namespace Cent
         return {Constant::ValueType::STRING, p_value};
     }
 
+
+    Type::ValueData operator* (const Type::ValueData &p_a, const Type::ValueData &p_b)
+    {
+        using namespace Constant;
+
+        assert(("A and B must be of the same type", p_a.type == p_b.type));
+
+        switch (p_a.type)
+        {
+        case ValueType::INT:
+            return Value(std::get<int>(p_a.content) * std::get<int>(p_b.content));
+        case ValueType::FLOAT:
+            return Value(std::get<float>(p_a.content) * std::get<float>(p_b.content));
+        }
+    
+        return Type::ValueData{ValueType::INVALID};
+    }
+
     Type::ValueData operator+ (const Type::ValueData &p_a, const Type::ValueData &p_b)
     {
         using namespace Constant;

@@ -38,6 +38,7 @@ namespace Cent
     Type::ValueData Value(float p_value);
     Type::ValueData Value(std::string p_value);
 
+    Type::ValueData operator* (const Type::ValueData &p_a, const Type::ValueData &p_b);
     Type::ValueData operator+ (const Type::ValueData &p_a, const Type::ValueData &p_b);
     Type::ValueData operator- (const Type::ValueData &p_a, const Type::ValueData &p_b);
 }
