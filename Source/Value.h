@@ -7,6 +7,7 @@
 #include <string>
 #include <type_traits>
 #include <concepts>
+#include <variant>
 
 namespace Cent
 {
@@ -20,10 +21,7 @@ namespace Cent
         struct ValueData
         {
             Constant::ValueType type = Constant::ValueType::INVALID;
-            int value_int = 0;
-            float value_float = 0.0f;
-            std::string value_str = "";
-
+            std::variant<int, float, std::string> content; 
             /// @brief This field is only assigned when the ValueData is returned  
             ///        from evaluate_expression and the .type field is set to Invalid.
             ExprShrd eval_expr_err = nullptr; 
@@ -38,10 +36,10 @@ namespace Cent
         }
     }
 
-    Type::ValueData Int(int p_value);
-    Type::ValueData Float(float p_value);
-    Type::ValueData String(std::string p_value);
-    Type::ValueData Bool(bool p_value);
+    
+    Type::ValueData Value(int p_value);
+    Type::ValueData Value(float p_value);
+    Type::ValueData Value(std::string p_value);
 
     Type::ValueData operator+ (const Type::ValueData &p_a, const Type::ValueData &p_b);
     Type::ValueData operator- (const Type::ValueData &p_a, const Type::ValueData &p_b);

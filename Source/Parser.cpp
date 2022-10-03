@@ -261,11 +261,11 @@ namespace Cent::Parser
             switch (p_expr->content_token->type)
             {
             case TokenType::STRING:
-                return String(p_expr->content_token->literal);
+                return Value(p_expr->content_token->literal);
             case TokenType::INT:
-                return Int(std::stoi(p_expr->content_token->literal));
+                return Value(std::stoi(p_expr->content_token->literal));
             case TokenType::FLOAT:
-                return Float(std::stof(p_expr->content_token->literal));
+                return Value(std::stof(p_expr->content_token->literal));
             }
 
             break;
