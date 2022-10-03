@@ -4,6 +4,7 @@
 #include "Token.h"
 
 #include <memory>
+#include <variant>
 
 namespace Cent
 {
@@ -21,8 +22,7 @@ namespace Cent
         struct ExpressionData
         {
             Constant::ExpressionType type;
-            TokenShrd content_token = nullptr;
-            std::shared_ptr<ExpressionData> content_expr = nullptr;
+            std::variant<TokenShrd, std::shared_ptr<ExpressionData>> content;
             std::shared_ptr<ExpressionData> left = nullptr;
             std::shared_ptr<ExpressionData> right = nullptr;
         };

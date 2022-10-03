@@ -3,6 +3,7 @@
 
 #include <concepts>
 #include <array>
+#include <variant>
 
 
 // { Static Definitions
@@ -237,14 +238,15 @@ namespace Cent::Parser
     Type::ValueData evaluate_expr(const Type::ExprShrd& p_expr) noexcept
     {
         using namespace Cent::Constant;
+        using namespace Cent::Type;
 
         switch (p_expr->type)
         {
         case ExpressionType::GROUPING:
-            return evaluate_expr(p_expr->content_expr);
+            return evaluate_expr(std::get<ExprShrd>(p_expr->content));
 
         case ExpressionType::BINARY: 
-            switch (p_expr->content_token->type)
+            switch (std::get<TokenShrd>(p_expr->content)->type)
             {
             case TokenType::PLUS:
                 return evaluate_expr(p_expr->left) + evaluate_expr(p_expr->right);
@@ -258,14 +260,14 @@ namespace Cent::Parser
             break;
 
         case ExpressionType::LITERAL:
-            switch (p_expr->content_token->type)
+            switch (std::get<TokenShrd>(p_expr->content)->type)
             {
             case TokenType::STRING:
-                return Value(p_expr->content_token->literal);
+                return Value(std::get<TokenShrd>(p_expr->content)->literal);
             case TokenType::INT:
-                return Value(std::stoi(p_expr->content_token->literal));
+                return Value(std::stoi(std::get<TokenShrd>(p_expr->content)->literal));
             case TokenType::FLOAT:
-                return Value(std::stof(p_expr->content_token->literal));
+                return Value(std::stof(std::get<TokenShrd>(p_expr->content)->literal));
             }
 
             break;

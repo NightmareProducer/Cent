@@ -8,25 +8,26 @@ namespace Cent::Tool
     void pretty_print(const Type::ExprShrd& p_expr)
     {
         using namespace Cent::Constant;
+        using namespace Cent::Type;
         if (!p_expr) return;
 
         switch(p_expr->type)
         {
             case ExpressionType::LITERAL:
-                std::cout << p_expr->content_token->lexeme;
+                std::cout << std::get<TokenShrd>(p_expr->content)->lexeme;
                 break;
             case ExpressionType::UNARY:
-                std::cout << "(" << p_expr->content_token->lexeme;
+                std::cout << "(" << std::get<TokenShrd>(p_expr->content)->lexeme;
                 pretty_print(p_expr->right);
                 std::cout << ")";
                 break;
             case ExpressionType::GROUPING:
                 std::cout << "(";
-                pretty_print(p_expr->content_expr);
+                pretty_print(std::get<ExprShrd>(p_expr->content));
                 std::cout << ")";
                 break;
             case ExpressionType::BINARY:
-                std::cout << "(" << p_expr->content_token->lexeme;
+                std::cout << "(" << std::get<TokenShrd>(p_expr->content)->lexeme;
                 pretty_print(p_expr->left);
                 pretty_print(p_expr->right);
                 std::cout << ")";
@@ -46,19 +47,19 @@ namespace Cent // External Functions
     Type::ExprPtr Binary(Type::ExprShrd p_left, Type::TokenShrd p_op, Type::ExprShrd p_right) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
-            new Type::ExpressionData{Constant::ExpressionType::BINARY, p_op, nullptr, p_left, p_right});
+            new Type::ExpressionData{Constant::ExpressionType::BINARY, p_op, p_left, p_right});
     }
 
     Type::ExprPtr Unary(Type::TokenShrd p_op, Type::ExprShrd p_expr) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
-            new Type::ExpressionData{Constant::ExpressionType::UNARY, p_op, nullptr, nullptr, p_expr});
+            new Type::ExpressionData{Constant::ExpressionType::UNARY, p_op, nullptr, p_expr});
     }
 
     Type::ExprPtr Grouping(Type::ExprShrd p_expr) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
-            new Type::ExpressionData{Constant::ExpressionType::GROUPING, nullptr, p_expr});
+            new Type::ExpressionData{Constant::ExpressionType::GROUPING, p_expr});
     }
 
     Type::ExprPtr Literal(Type::TokenShrd p_literal) noexcept
