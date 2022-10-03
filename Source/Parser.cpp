@@ -32,25 +32,25 @@ namespace {
 
     /// @brief Rule: expression -> equality
     /// @param p_token The token to be match with a producer 
-    ExpressionShrd expression(TokenShrd p_token) noexcept;
+    ExprShrd expression(TokenShrd p_token) noexcept;
     /// @brief Rule: equality -> comparison ( ( "!=" | "==" ) comparison )*;
     /// @param p_token The token to be match with a producer 
-    ExpressionShrd equality(TokenShrd p_token)  noexcept;
+    ExprShrd equality(TokenShrd p_token)  noexcept;
     /// @brief Rule: comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )*;
     /// @param p_token The token to be match with a producer 
-    ExpressionShrd comparison(TokenShrd p_token) noexcept;
+    ExprShrd comparison(TokenShrd p_token) noexcept;
     /// @brief Rule: term -> factor ( ( "-" | "+" ) factor )*;
     /// @param p_token The token to be match with a producer 
-    ExpressionShrd term(TokenShrd p_token) noexcept;
+    ExprShrd term(TokenShrd p_token) noexcept;
     /// @brief Rule: factor -> unary ( ( "*" | "/" ) unary )*;
     /// @param p_token The token to be match with a producer 
-    ExpressionShrd factor(TokenShrd p_token) noexcept;
+    ExprShrd factor(TokenShrd p_token) noexcept;
     /// @brief Rule: unary -> ( "!" | "-" ) unary | primary;
     /// @param p_token The token to be match with a producer 
-    ExpressionShrd unary(TokenShrd p_token) noexcept;
+    ExprShrd unary(TokenShrd p_token) noexcept;
     /// @brief Rule: NUMBER | STRING | "true" | "false" | "nil" | "(" EXPRESSION ")";
     /// @param p_token The token to be match with a producer 
-    ExpressionShrd primary(TokenShrd p_token) noexcept;
+    ExprShrd primary(TokenShrd p_token) noexcept;
  
     /// @brief Check wether the token matches any of the specified token types.
     /// @tparam ...T Enum TokenType
@@ -73,12 +73,12 @@ namespace {
 
 
     // { Static Function Definitions
-    ExpressionShrd expression(TokenShrd p_token) noexcept
+    ExprShrd expression(TokenShrd p_token) noexcept
     {
         return equality(p_token);
     }
 
-    ExpressionShrd equality(TokenShrd p_token)  noexcept
+    ExprShrd equality(TokenShrd p_token)  noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -94,7 +94,7 @@ namespace {
         return expr;
     }
 
-    ExpressionShrd comparison(TokenShrd p_token) noexcept
+    ExprShrd comparison(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -110,7 +110,7 @@ namespace {
         return expr;
     }
 
-    ExpressionShrd term(TokenShrd p_token) noexcept
+    ExprShrd term(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -126,7 +126,7 @@ namespace {
         return expr;
     }
 
-    ExpressionShrd factor(TokenShrd p_token) noexcept
+    ExprShrd factor(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -142,7 +142,7 @@ namespace {
         return expr;
     }
 
-    ExpressionShrd unary(TokenShrd p_token) noexcept
+    ExprShrd unary(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
         if(match(p_token, BANG, MINUS))
@@ -155,7 +155,7 @@ namespace {
         return primary(p_token);
     }
 
-    ExpressionShrd primary(TokenShrd p_token) noexcept
+    ExprShrd primary(TokenShrd p_token) noexcept
     {
         using namespace Cent::Constant;
         using enum Cent::Constant::TokenType;
@@ -222,7 +222,7 @@ namespace {
 // { Header Definitions
 namespace Cent::Parser
 {
-    Type::ExpressionShrd parse(Type::TokenList p_tokens) noexcept
+    Type::ExprShrd parse(Type::TokenList p_tokens) noexcept
     {
         s_index = 0;
         s_tokens = &p_tokens;
@@ -234,7 +234,7 @@ namespace Cent::Parser
         return ret;
     }
 
-    Type::ValueData evaluate_expr(const Type::ExpressionShrd& p_expr) noexcept
+    Type::ValueData evaluate_expr(const Type::ExprShrd& p_expr) noexcept
     {
         using namespace Cent::Constant;
 
@@ -242,6 +242,7 @@ namespace Cent::Parser
         {
         case ExpressionType::GROUPING:
             return evaluate_expr(p_expr->content_expr);
+
         case ExpressionType::BINARY: 
             switch (p_expr->content_token->type)
             {
@@ -252,8 +253,10 @@ namespace Cent::Parser
             }
 
             break;
+
         case ExpressionType::UNARY:
             break;
+
         case ExpressionType::LITERAL:
             switch (p_expr->content_token->type)
             {
@@ -264,6 +267,7 @@ namespace Cent::Parser
             case TokenType::FLOAT:
                 return Float(std::stof(p_expr->content_token->literal));
             }
+
             break;
         }
 

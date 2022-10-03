@@ -12,7 +12,8 @@ namespace Cent
 {
     namespace Parser
     {
-        Type::ExpressionShrd parse(Type::TokenList p_tokens) noexcept;
+        Type::ExprShrd parse(Type::TokenList p_tokens) noexcept;
+        Type::ValueData evaluate_expr(const Type::ExprShrd& p_expr) noexcept;
     }
 }
 

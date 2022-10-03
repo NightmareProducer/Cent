@@ -7,17 +7,22 @@ namespace Cent
 {
     Type::ValueData Int(int p_value)
     {
-        return {Constant::ValueType::INT, p_value, 0.0f, ""};
+        return {.type = Constant::ValueType::INT, .value_int = p_value};
     }
 
     Type::ValueData Float(float p_value)
     {
-        return {Constant::ValueType::FLOAT, 0, p_value, ""};
+        return {.type = Constant::ValueType::FLOAT, .value_float = p_value};
     }
 
     Type::ValueData String(std::string p_value)
     {
-        return {Constant::ValueType::STRING, 0, 0.0f, p_value};
+        return {.type = Constant::ValueType::STRING, .value_str = p_value};
+    }
+
+    Type::ValueData Bool(bool p_value)
+    {
+        return {.type = Constant::ValueType::BOOL, .value_int = p_value};
     }
 
     Type::ValueData operator+ (const Type::ValueData &p_a, const Type::ValueData &p_b)
@@ -29,11 +34,11 @@ namespace Cent
         switch (p_a.type)
         {
         case ValueType::INT:
-            return Type::ValueData{p_a.type, p_a.value_int + p_b.value_int};
+            return Int(p_a.value_int + p_b.value_int);
         case ValueType::FLOAT:
-            return Type::ValueData{.type = p_a.type, .value_float = p_a.value_float + p_b.value_float};
+            return Float(p_a.value_float + p_b.value_float);
         case ValueType::STRING:
-            return Type::ValueData{.type = p_a.type, .value_str = p_a.value_str + p_b.value_str};
+            return String(p_a.value_str + p_b.value_str);
         }
     
         return Type::ValueData{ValueType::INVALID};
@@ -48,9 +53,9 @@ namespace Cent
         switch (p_a.type)
         {
         case ValueType::INT:
-            return Type::ValueData{p_a.type, p_a.value_int + p_b.value_int};
+            return Int(p_a.value_int + p_b.value_int);
         case ValueType::FLOAT:
-            return Type::ValueData{.type = p_a.type, .value_float = p_a.value_float - p_b.value_float};
+            return Float(p_a.value_float + p_b.value_float);
         }
     
         return Type::ValueData{ValueType::INVALID};
