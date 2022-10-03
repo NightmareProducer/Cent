@@ -74,4 +74,19 @@ namespace Cent
     
         return Type::ValueData{ValueType::INVALID};
     }
+
+    Type::ValueData operator- (const Type::ValueData &p_a)
+    {
+        using namespace Constant;
+
+        switch (p_a.type)
+        {
+        case ValueType::INT:
+            return Value(-std::get<int>(p_a.content));
+        case ValueType::FLOAT:
+            return Value(-std::get<float>(p_a.content));
+        }
+
+        return Type::ValueData{ValueType::INVALID};
+    }
 }

@@ -149,7 +149,7 @@ namespace {
         if(match(p_token, BANG, MINUS))
         {
             auto op = p_token;
-            auto right = unary(p_token);
+            auto right = unary(next_token());
             return (next(), Unary(op, right));
         }
         
@@ -256,9 +256,17 @@ namespace Cent::Parser
                 return evaluate_expr(p_expr->left) - evaluate_expr(p_expr->right);
             }
 
-        case ExpressionType::UNARY:
             break;
-
+        case ExpressionType::UNARY:
+        {
+            auto right = evaluate_expr(p_expr->right);
+            switch (std::get<TokenShrd>(p_expr->content)->type)
+            {
+            case TokenType::MINUS:
+                return -right;
+            }
+        }
+            break;
         case ExpressionType::LITERAL:
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {
@@ -269,6 +277,8 @@ namespace Cent::Parser
             case TokenType::FLOAT:
                 return Value(std::stof(std::get<TokenShrd>(p_expr->content)->literal));
             }
+
+            break;
         }
 
         return {ValueType::INVALID};
