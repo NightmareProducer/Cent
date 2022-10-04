@@ -169,18 +169,16 @@ namespace {
             auto expr = expression(next_token());
 
             if(next(); match(current_token(), RIGHT_PAREN))
-                Cent::Error::enqueue(current_token()->line, 
+                Cent::Error::syntax(current_token()->line, 
                                      current_token()->column, 
-                                     "Expect ')' after expression.", 
-                                     Phase::PARSING);
+                                     "Expect ')' after expression.");
 
             return Grouping(expr);
         }
 
-        Cent::Error::enqueue(current_token()->line, 
+        Cent::Error::syntax(current_token()->line, 
                              current_token()->column, 
-                             "Unrecognised Expression: " + current_token()->lexeme, 
-                             Phase::PARSING);
+                             "Unrecognised Expression: " + current_token()->lexeme);
 
         return InvalidExpr(p_token);
     }
@@ -248,18 +246,21 @@ namespace Cent::Parser
             return evaluate_expr(std::get<ExprShrd>(p_expr->content));
 
         case ExpressionType::BINARY: 
+        {
+            auto left = evaluate_expr(p_expr->left);
+            auto right = evaluate_expr(p_expr->right);
+
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {
             case TokenType::STAR:
-                return evaluate_expr(p_expr->left) * evaluate_expr(p_expr->right);
+                return left * right;
             case TokenType::PLUS:
-                return evaluate_expr(p_expr->left) + evaluate_expr(p_expr->right);
+                return left + right;
             case TokenType::MINUS:
-                return evaluate_expr(p_expr->left) - evaluate_expr(p_expr->right);
+                return left - right;
             }
-
+        }
             break;
-
         case ExpressionType::UNARY:
         {
             auto right = evaluate_expr(p_expr->right);

@@ -142,7 +142,7 @@ namespace Cent::Scanner
 
                     // No closing string literal found
                     if(c == EOF) {
-                        Cent::Error::enqueue(s_linenum, s_column, "Unterminated string", Constant::Phase::SCANNING);
+                        Cent::Error::syntax(s_linenum, s_column, "Unterminated string");
                         break;
                     }
 
@@ -203,7 +203,7 @@ namespace Cent::Scanner
 
                     add_token(Tool::reserved(lexeme_buf));
                     } else
-                        Error::enqueue(s_linenum, s_column, "Unrecognize Character", Constant::Phase::SCANNING);
+                        Error::syntax(s_linenum, s_column, "Unrecognize Character");
             }
         }
 

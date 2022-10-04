@@ -12,11 +12,10 @@ namespace Cent
 
     namespace Type
     {
-        struct ErrorData 
+        struct SyntaxError 
         {
             int line;
             int column;
-            Constant::Phase phase;
             std::string reason;
         };
     } // namespace Type
@@ -29,7 +28,7 @@ namespace Cent
         /// @param p_column The column where the error occured
         /// @param p_reason The reasoning behind the error.
         /// @param p_phase  Which phased the error occured 
-        void enqueue(int p_line, int p_column, std::string p_reason, Constant::Phase p_phase) noexcept;
+        void syntax(int p_line, int p_column, std::string p_reason) noexcept;
     } // namespace Tool
 } // namespace Error
 #endif
