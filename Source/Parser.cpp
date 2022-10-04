@@ -240,6 +240,14 @@ namespace Cent::Parser
         using namespace Cent::Constant;
         using namespace Cent::Type;
 
+        // set the from expression when handling invalid value
+        auto wrap = [&p_expr](Type::ValueData&& p_val){
+            if(p_val.type == ValueType::INVALID)
+                std::get<Type::EvalErr>(p_val.content).from = p_expr;
+
+            return p_val;
+        };
+
         switch (p_expr->type)
         {
         case ExpressionType::GROUPING:
@@ -253,27 +261,28 @@ namespace Cent::Parser
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {
             case TokenType::STAR:
-                return left * right;
+                return wrap(left * right);
             case TokenType::PLUS:
-                return left + right;
+                return wrap(left + right);
             case TokenType::MINUS:
-                return left - right;
+                return wrap(left - right);
             }
         }
-            break;
+
+            return ValueErr(p_expr, ERR::INVALID_BINARY_EXPR);
         case ExpressionType::UNARY:
         {
             auto right = evaluate_expr(p_expr->right);
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {
             case TokenType::MINUS:
-                return -right;
+                return wrap(-right);
             case TokenType::BANG:
-                return !right;
+                return wrap(!right);
             }
         }
-            break;
 
+            return ValueErr(p_expr, ERR::INVALID_UNARY_EXPR);
         case ExpressionType::LITERAL:
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {
@@ -289,10 +298,10 @@ namespace Cent::Parser
                 return Value(true);
             }
 
-            break;
+            return ValueErr(p_expr, ERR::INVALID_LITERAL);
         }
 
-        return {ValueType::INVALID};
+        return ValueErr(p_expr, ERR::ILL_FORMED_EXPR);
     }
 } // namespace Cent
 /// } Headere Definitions

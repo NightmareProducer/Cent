@@ -1,28 +1,35 @@
 #include "Value.h"
+#include "Error.h"
+#include "Expressions.h"
 
 #include <iostream>
-#include <cassert>
+
 
 namespace Cent
 {
-    Type::ValueData Value(int p_value)
+    constexpr Type::ValueData Value(int p_value)
     {
         return {Constant::ValueType::INT, p_value};
     }
 
-    Type::ValueData Value(float p_value)
+    constexpr Type::ValueData Value(float p_value)
     {
         return {Constant::ValueType::FLOAT, p_value};
     }
 
-    Type::ValueData Value(std::string p_value)
+    constexpr Type::ValueData Value(std::string p_value)
     {
         return {Constant::ValueType::STRING, p_value};
     }
 
-    Type::ValueData Value(bool p_value)
+    constexpr Type::ValueData Value(bool p_value)
     {
         return {Constant::ValueType::BOOL, p_value};
+    }
+
+    Type::ValueData ValueErr(Type::ExprShrd p_expr, Constant::ERR p_errcode)
+    {
+        return {Constant::ValueType::INVALID, Type::EvalErr{p_expr, p_errcode}};
     }
 
 
@@ -30,8 +37,9 @@ namespace Cent
     {
         using namespace Constant;
 
-        if(p_a.type != p_b.type) goto ERR;
-
+        if(p_a.type != p_b.type)
+            return ValueErr(nullptr, ERR::INVALID_OPERATION);
+        
         switch (p_a.type)
         {
         case ValueType::INT:
@@ -40,14 +48,15 @@ namespace Cent
             return Value(std::get<float>(p_a.content) * std::get<float>(p_b.content));
         }
     
-ERR:    return Type::ValueData{ValueType::INVALID};
+        return ValueErr(nullptr, ERR::INVALID_OPERATION);
     }
 
     Type::ValueData operator+ (const Type::ValueData &p_a, const Type::ValueData &p_b)
     {
         using namespace Constant;
 
-        assert(("A and B must be of the same type", p_a.type == p_b.type));
+        if(p_a.type != p_b.type)
+            return ValueErr(nullptr, ERR::INVALID_OPERATION);
         
         switch (p_a.type)
         {
@@ -58,16 +67,13 @@ ERR:    return Type::ValueData{ValueType::INVALID};
         case ValueType::STRING:
             return Value(std::get<std::string>(p_a.content) + std::get<std::string>(p_b.content));
         }
-
     
-        return Type::ValueData{ValueType::INVALID};
+        return ValueErr(nullptr, ERR::INVALID_OPERATION);
     }
 
     Type::ValueData operator- (const Type::ValueData &p_a, const Type::ValueData &p_b)
     {
         using namespace Constant;
-
-        assert(("A and B must be of the same type", p_a.type == p_b.type));
 
         switch (p_a.type)
         {
@@ -77,7 +83,7 @@ ERR:    return Type::ValueData{ValueType::INVALID};
             return Value(std::get<float>(p_a.content) - std::get<float>(p_b.content));
         }
     
-        return Type::ValueData{ValueType::INVALID};
+        return ValueErr(nullptr, ERR::INVALID_OPERATION);
     }
 
     Type::ValueData operator- (const Type::ValueData &p_a)
@@ -92,7 +98,7 @@ ERR:    return Type::ValueData{ValueType::INVALID};
             return Value(-std::get<float>(p_a.content));
         }
 
-        return Type::ValueData{ValueType::INVALID};
+        return ValueErr(nullptr, ERR::INVALID_OPERATION);
     }
 
 
@@ -106,6 +112,6 @@ ERR:    return Type::ValueData{ValueType::INVALID};
             return Value(!std::get<bool>(p_a.content));
         }
 
-        return Type::ValueData{ValueType::INVALID};
+        return ValueErr(nullptr, ERR::INVALID_OPERATION);
     }
 }

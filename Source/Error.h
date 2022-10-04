@@ -1,6 +1,8 @@
 #ifndef CENT_ERROR
 #define CENT_ERROR
 
+#include "Expressions.h"
+
 #include <string>
 
 namespace Cent
@@ -8,6 +10,16 @@ namespace Cent
     namespace Constant
     {
         enum class Phase { SCANNING, PARSING, EVAL};
+
+        enum class ERR {
+            INVALID_OPERATION,
+
+            INVALID_BINARY_EXPR,
+            INVALID_UNARY_EXPR,
+            ILL_FORMED_EXPR,
+
+            INVALID_LITERAL,
+        };
     } // namespace Constant
 
     namespace Type
@@ -17,6 +29,12 @@ namespace Cent
             int line;
             int column;
             std::string reason;
+        };
+
+        struct EvalErr
+        {
+            ExprShrd from;
+            Constant::ERR code;
         };
     } // namespace Type
 
