@@ -304,4 +304,4 @@ namespace Cent::Parser
         return ValueErr(p_expr, ERR::ILL_FORMED_EXPR);
     }
 } // namespace Cent
-/// } Headere Definitions
+/// } Header Definitions

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include <array>
+#include <concepts>
+#include <functional>
 
 
 using namespace Cent;
@@ -14,16 +16,18 @@ int main(int argc, char *argv[])
         auto content = Tool::file2string(argv[1]);
 
         auto tokens = Scanner::scan(content);
-        auto expr = Parser::parse(tokens);
-        if(Tool::is_valid_expr(expr))
+        // auto expr = Parser::parse(tokens);
+
+        handle(Parser::parse(tokens), [](auto &&expr) 
         {
             Tool::pretty_print(expr);
-            auto v = Parser::evaluate_expr(expr);
-        } else
-        {
-            std::cerr << "Invalid Expression" << std::endl;
-            std::cerr << content << std::endl;
-        }
+
+            handle(Parser::evaluate_expr(expr), [](auto &&v) 
+            {
+                //handle value on success
+            });
+        });
+        
     } else if (argc == 1)
     {
         std::cout << "> ";

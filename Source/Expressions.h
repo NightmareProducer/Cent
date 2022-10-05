@@ -39,6 +39,11 @@ namespace Cent
         void pretty_print(const Type::ExprShrd& p_expr);
 
         bool is_valid_expr(const Type::ExprShrd& p_expr);
+
+        inline bool is_valid(const Type::ExprShrd& p_value)
+        {
+            return is_valid_expr(p_value);
+        }
     } // namespace Tool
 
 

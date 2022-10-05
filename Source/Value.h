@@ -10,6 +10,7 @@
 #include <concepts>
 #include <variant>
 
+
 namespace Cent
 {
     namespace Constant
@@ -28,9 +29,14 @@ namespace Cent
 
     namespace Tool
     {
-        inline bool is_invalid_value(const Type::ValueData& p_value)
+        inline bool is_valid_value(const Type::ValueData& p_value)
         {
-            return p_value.type == Constant::ValueType::INVALID;
+            return p_value.type != Constant::ValueType::INVALID;
+        }
+
+        inline bool is_valid(const Type::ValueData& p_value)
+        {
+            return is_valid_value(p_value);
         }
     }
 
