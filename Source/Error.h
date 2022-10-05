@@ -4,18 +4,20 @@
 #include "Expressions.h"
 
 #include <string>
-#include <iostream>
 
 namespace Cent::Constant
 {
     enum class ERR {
+        SUCCESS = 0,
         INVALID_OPERATION,
 
+        INVALID_EXPR,
         INVALID_BINARY_EXPR,
         INVALID_UNARY_EXPR,
         ILL_FORMED_EXPR,
 
         INVALID_LITERAL,
+        MISSING_RIGHT_PAREN
     };
 }
 

@@ -16,13 +16,12 @@ int main(int argc, char *argv[])
         auto content = Tool::file2string(argv[1]);
 
         auto tokens = Scanner::scan(content);
-        // auto expr = Parser::parse(tokens);
 
-        handle(Parser::parse(tokens), [](auto &&expr) 
+        handle(Parser::parse(tokens), [](auto&& parse_result) 
         {
-            Tool::pretty_print(expr);
+            Tool::pretty_print(parse_result.expr);
 
-            handle(Parser::evaluate_expr(expr), [](auto &&v) 
+            handle(Parser::evaluate(parse_result.expr), [](auto &&v) 
             {
                 //handle value on success
             });

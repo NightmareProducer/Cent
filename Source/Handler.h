@@ -3,14 +3,18 @@
 
 #include "Value.h"
 #include "Expressions.h"
+#include "Parser.h"
 
 #include <concepts>
-#include <iostream>
+
 
 namespace Cent::Concept
 {
     template<typename T>
-    concept Handleable = std::same_as<T, Type::ValueData> || std::same_as<T, Type::ExprShrd>;
+    concept Handleable = std::same_as<T, Type::ValueData> || 
+                         std::same_as<T, Type::ExprShrd>  ||
+                         std::same_as<T, Type::ParseResult> ||
+                         std::same_as<T, Type::ParseResult&&>;
 }
 
 namespace Cent
@@ -18,7 +22,7 @@ namespace Cent
     using namespace Concept;
 
     template<Handleable T, class Fn1, class Fn2> requires std::invocable<Fn1, T> && std::invocable<Fn2, T>
-        T handle(const T &p_data, Fn1 p_pass, Fn2 p_fail)
+        T handle(T &&p_data, Fn1 p_pass, Fn2 p_fail)
     {
         if (Tool::is_valid(p_data))
             p_pass(p_data);
@@ -29,7 +33,7 @@ namespace Cent
     }
 
     template<Handleable T, class Fn1> requires std::invocable<Fn1, T> 
-        T handle(const T &p_data, Fn1 p_pass)
+        T handle(T &&p_data, Fn1 p_pass)
     {
         if (Tool::is_valid(p_data))
             p_pass(p_data);

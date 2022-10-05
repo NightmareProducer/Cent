@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include "Error.h"
+#include "Handler.h"
 
 #include <concepts>
 #include <array>
@@ -33,25 +34,25 @@ namespace {
 
     /// @brief Rule: expression -> equality
     /// @param p_token The token to be match with a producer 
-    ExprShrd expression(TokenShrd p_token) noexcept;
+    ParseResult expression(TokenShrd p_token) noexcept;
     /// @brief Rule: equality -> comparison ( ( "!=" | "==" ) comparison )*;
     /// @param p_token The token to be match with a producer 
-    ExprShrd equality(TokenShrd p_token)  noexcept;
+    ParseResult equality(TokenShrd p_token)  noexcept;
     /// @brief Rule: comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )*;
     /// @param p_token The token to be match with a producer 
-    ExprShrd comparison(TokenShrd p_token) noexcept;
+    ParseResult comparison(TokenShrd p_token) noexcept;
     /// @brief Rule: term -> factor ( ( "-" | "+" ) factor )*;
     /// @param p_token The token to be match with a producer 
-    ExprShrd term(TokenShrd p_token) noexcept;
+    ParseResult term(TokenShrd p_token) noexcept;
     /// @brief Rule: factor -> unary ( ( "*" | "/" ) unary )*;
     /// @param p_token The token to be match with a producer 
-    ExprShrd factor(TokenShrd p_token) noexcept;
+    ParseResult factor(TokenShrd p_token) noexcept;
     /// @brief Rule: unary -> ( "!" | "-" ) unary | primary;
     /// @param p_token The token to be match with a producer 
-    ExprShrd unary(TokenShrd p_token) noexcept;
+    ParseResult unary(TokenShrd p_token) noexcept;
     /// @brief Rule: NUMBER | STRING | "true" | "false" | "nil" | "(" EXPRESSION ")";
     /// @param p_token The token to be match with a producer 
-    ExprShrd primary(TokenShrd p_token) noexcept;
+    ParseResult primary(TokenShrd p_token) noexcept;
  
     /// @brief Check wether the token matches any of the specified token types.
     /// @tparam ...T Enum TokenType
@@ -74,113 +75,123 @@ namespace {
 
 
     // { Static Function Definitions
-    ExprShrd expression(TokenShrd p_token) noexcept
+    ParseResult wrap(const ExprShrd& p_expr, ERR p_errcode)
+    {
+        return {p_expr, p_errcode};
+    }
+
+    ParseResult wrap(const ExprShrd& p_expr)
+    {
+        return {p_expr, ERR::SUCCESS};
+    }
+
+
+    ParseResult expression(TokenShrd p_token) noexcept
     {
         return equality(p_token);
     }
 
-    ExprShrd equality(TokenShrd p_token)  noexcept
+    ParseResult equality(TokenShrd p_token)  noexcept
     {
         using enum Cent::Constant::TokenType;
 
-        auto expr = comparison(p_token);
-
-        while(match(current_token(), BANG_EQ, EQUAL_EQ))
+        return handle(comparison(p_token), [&](auto&& p_res)
         {
-            auto op = current_token();
-            auto right = comparison(next_token());
-            expr = Binary(expr, op, right);
-        }
-
-        return expr;
+            while(match(current_token(), BANG_EQ, EQUAL_EQ))
+            {
+                auto op = current_token();
+                handle(comparison(next_token()), [&](auto&& p__res)
+                {
+                    p_res.expr = Binary(p_res.expr, op, p__res.expr);
+                });
+            }
+        });
     }
 
-    ExprShrd comparison(TokenShrd p_token) noexcept
+    ParseResult comparison(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
-        auto expr = term(p_token);
-
-        while(match(current_token(), GREATER, GREATER_EQ, LESS, LESS_EQ))
+        return handle(term(p_token), [&](auto&& p_res) 
         {
-            auto op = current_token(); 
-            auto right = term(next_token());
-            expr = Binary(expr, op, right);
-        }
-
-        return expr;
+            while(match(current_token(), GREATER, GREATER_EQ, LESS, LESS_EQ))
+            {
+                auto op = current_token(); 
+                handle(term(next_token()), [&](auto&& p__res){
+                    p_res.expr = Binary(p_res.expr, op, p__res.expr);
+                });
+            }   
+        });
     }
 
-    ExprShrd term(TokenShrd p_token) noexcept
+    ParseResult term(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
-        auto expr = factor(p_token);
-
-        while(match(current_token(), MINUS, PLUS))
+        return handle(factor(p_token), [&](auto&& p_res)
         {
-            auto op = current_token();
-            auto right = factor(next_token());
-            expr = Binary(expr, op, right);
-        }
-
-        return expr;
+            while(match(current_token(), MINUS, PLUS))
+            {
+                auto op = current_token();
+                handle(factor(next_token()), [&](auto&& p__res) 
+                {
+                    p_res.expr = Binary(p_res.expr, op, p__res.expr);
+                });
+            }
+        });
     }
 
-    ExprShrd factor(TokenShrd p_token) noexcept
+    ParseResult factor(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
-        auto expr = unary(p_token);
-
-        while(match(current_token(), SLASH, STAR))
+        return handle(unary(p_token), [&](auto&& p_res) 
         {
-            auto op = current_token();
-            auto right = unary(next_token());
-            expr = Binary(expr, op, right);
-        }
-
-        return expr;
+            while(match(current_token(), SLASH, STAR))
+            {
+                auto op = current_token();
+                handle(unary(next_token()), [&](auto&& p__res) 
+                {
+                    p_res.expr = Binary(p_res.expr, op, p__res.expr);
+                });
+            }
+        });
     }
 
-    ExprShrd unary(TokenShrd p_token) noexcept
+    ParseResult unary(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
         if(match(p_token, BANG, MINUS))
         {
-            auto op = p_token;
-            auto right = unary(next_token());
-            return (next(), Unary(op, right));
+            return handle(unary(next_token()), [&](auto&& res) 
+            {
+                res.expr = Unary(p_token, res.expr);
+                next();
+            });
         }
         
         return primary(p_token);
     }
 
-    ExprShrd primary(TokenShrd p_token) noexcept
+    ParseResult primary(TokenShrd p_token) noexcept
     {
         using namespace Cent::Constant;
         using enum Cent::Constant::TokenType;
 
         if(match(p_token, FALSE, TRUE, STRING, INT, FLOAT))
-            return (next(), Literal(p_token));
+            return wrap((next(), Literal(p_token)));
         
         if(match(p_token, LEFT_PAREN))
         {
-            auto expr = expression(next_token());
+            auto expr = expression(next_token()).expr;
 
             if(next(); match(current_token(), RIGHT_PAREN))
-                Cent::Error::syntax(current_token()->line, 
-                                     current_token()->column, 
-                                     "Expect ')' after expression.");
+                return wrap(InvalidExpr(p_token), ERR::MISSING_RIGHT_PAREN);
 
-            return Grouping(expr);
+            return wrap(Grouping(expr));
         }
 
-        Cent::Error::syntax(current_token()->line, 
-                             current_token()->column, 
-                             "Unrecognised Expression: " + current_token()->lexeme);
-
-        return InvalidExpr(p_token);
+        return wrap(InvalidExpr(p_token), ERR::INVALID_EXPR);
     }
 
     template<TokenTypes... T>
@@ -223,7 +234,7 @@ namespace {
 // { Header Definitions
 namespace Cent::Parser
 {
-    Type::ExprShrd parse(Type::TokenList p_tokens) noexcept
+    Type::ParseResult parse(Type::TokenList p_tokens) noexcept
     {
         s_index = 0;
         s_tokens = &p_tokens;
@@ -235,7 +246,7 @@ namespace Cent::Parser
         return ret;
     }
 
-    Type::ValueData evaluate_expr(const Type::ExprShrd& p_expr) noexcept
+    Type::ValueData evaluate(const Type::ExprShrd& p_expr) noexcept
     {
         using namespace Cent::Constant;
         using namespace Cent::Type;
@@ -251,12 +262,12 @@ namespace Cent::Parser
         switch (p_expr->type)
         {
         case ExpressionType::GROUPING:
-            return evaluate_expr(std::get<ExprShrd>(p_expr->content));
+            return evaluate(std::get<ExprShrd>(p_expr->content));
 
         case ExpressionType::BINARY: 
         {
-            auto left = evaluate_expr(p_expr->left);
-            auto right = evaluate_expr(p_expr->right);
+            auto left = evaluate(p_expr->left);
+            auto right = evaluate(p_expr->right);
 
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {
@@ -272,7 +283,7 @@ namespace Cent::Parser
             return ValueErr(p_expr, ERR::INVALID_BINARY_EXPR);
         case ExpressionType::UNARY:
         {
-            auto right = evaluate_expr(p_expr->right);
+            auto right = evaluate(p_expr->right);
             switch (std::get<TokenShrd>(p_expr->content)->type)
             {
             case TokenType::MINUS:
