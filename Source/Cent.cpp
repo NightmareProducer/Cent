@@ -1,10 +1,6 @@
 #include "Cent.h"
 
 #include <iostream>
-#include <string>
-#include <array>
-#include <concepts>
-#include <functional>
 
 
 using namespace Cent;
@@ -17,14 +13,14 @@ int main(int argc, char *argv[])
 
         auto tokens = Scanner::scan(content);
 
-        handle(Parser::parse(tokens), [](auto&& parse_result) 
+        handle(Parser::parse(tokens), [](auto&& expr) 
         {
-            Tool::pretty_print(parse_result.expr);
+            Tool::pretty_print(expr);
 
-            handle(Parser::evaluate(parse_result.expr), [](auto &&v) 
-            {
-                //handle value on success
-            });
+            // handle(Parser::evaluate(parse_result.expr), [](auto &&v) 
+            // {
+            //     //handle value on success
+            // });
         });
         
     } else if (argc == 1)

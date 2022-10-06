@@ -12,7 +12,7 @@ namespace Cent
     {
         struct ParseResult
         {
-            ExprShrd expr;
+            ExprShrd data;
             Constant::ERR errcode;
         };
     }

@@ -5,6 +5,7 @@
 #include <concepts>
 #include <array>
 #include <variant>
+#include <type_traits>
 
 
 // { Static Definitions
@@ -95,14 +96,16 @@ namespace {
     {
         using enum Cent::Constant::TokenType;
 
-        return handle(comparison(p_token), [&](auto&& p_res)
+        return handle(comparison(p_token), [&](auto&& p_left)
         {
             while(match(current_token(), BANG_EQ, EQUAL_EQ))
             {
                 auto op = current_token();
-                handle(comparison(next_token()), [&](auto&& p__res)
+                handle(comparison(next_token()), [&](auto p_right)
                 {
-                    p_res.expr = Binary(p_res.expr, op, p__res.expr);
+                    // Binary(p_left, op, p_right);
+                    // p_left = Binary(p_left, op, p_right);
+                    // auto x = Binary(p_left, op, p_right);
                 });
             }
         });
@@ -114,13 +117,13 @@ namespace {
 
         return handle(term(p_token), [&](auto&& p_res) 
         {
-            while(match(current_token(), GREATER, GREATER_EQ, LESS, LESS_EQ))
-            {
-                auto op = current_token(); 
-                handle(term(next_token()), [&](auto&& p__res){
-                    p_res.expr = Binary(p_res.expr, op, p__res.expr);
-                });
-            }   
+            // while(match(current_token(), GREATER, GREATER_EQ, LESS, LESS_EQ))
+            // {
+            //     auto op = current_token(); 
+            //     handle(term(next_token()), [&](auto&& p__res){
+            //         p_res.expr = Binary(p_res.expr, op, p__res.expr);
+            //     });
+            // }   
         });
     }
 
@@ -128,14 +131,14 @@ namespace {
     {
         using enum Cent::Constant::TokenType;
 
-        return handle(factor(p_token), [&](auto&& p_res)
+        return handle(factor(p_token), [&](auto&& p_left)
         {
             while(match(current_token(), MINUS, PLUS))
             {
                 auto op = current_token();
-                handle(factor(next_token()), [&](auto&& p__res) 
+                handle(factor(next_token()), [&](auto&& p_right) 
                 {
-                    p_res.expr = Binary(p_res.expr, op, p__res.expr);
+                    p_left = Binary(p_left, op, p_right);
                 });
             }
         });
@@ -145,14 +148,14 @@ namespace {
     {
         using enum Cent::Constant::TokenType;
 
-        return handle(unary(p_token), [&](auto&& p_res) 
+        return handle(unary(p_token), [&](auto&& p_left) 
         {
             while(match(current_token(), SLASH, STAR))
             {
                 auto op = current_token();
-                handle(unary(next_token()), [&](auto&& p__res) 
+                handle(unary(next_token()), [&](auto&& p_right) 
                 {
-                    p_res.expr = Binary(p_res.expr, op, p__res.expr);
+                    p_left = Binary(p_left, op, p_right);
                 });
             }
         });
@@ -163,9 +166,9 @@ namespace {
         using enum Cent::Constant::TokenType;
         if(match(p_token, BANG, MINUS))
         {
-            return handle(unary(next_token()), [&](auto&& res) 
+            return handle(unary(next_token()), [&](auto&& expr) 
             {
-                res.expr = Unary(p_token, res.expr);
+                expr = Unary(p_token, expr);
                 next();
             });
         }
@@ -183,12 +186,12 @@ namespace {
         
         if(match(p_token, LEFT_PAREN))
         {
-            auto expr = expression(next_token()).expr;
+            auto res = expression(next_token());
 
             if(next(); match(current_token(), RIGHT_PAREN))
                 return wrap(InvalidExpr(p_token), ERR::MISSING_RIGHT_PAREN);
 
-            return wrap(Grouping(expr));
+            return res;
         }
 
         return wrap(InvalidExpr(p_token), ERR::INVALID_EXPR);
