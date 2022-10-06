@@ -1,5 +1,4 @@
 #include "Parser.h"
-#include "Error.h"
 #include "Handler.h"
 
 #include <concepts>
@@ -253,83 +252,81 @@ namespace Cent::Parser
         return ret;
     }
 
-    // Type::EvalResult evaluate(const Type::ExprShrd& p_expr) noexcept
-    // {
-    //     using namespace Cent::Constant;
-    //     using namespace Cent::Type;
+    Type::EvalResult evaluate(const Type::ExprShrd& p_expr) noexcept
+    {
+        using namespace Cent::Constant;
+        using namespace Cent::Type;
 
-    //     // set the from expression when handling invalid value
-    //     auto wrap = [&p_expr](Type::ValueData&& p_val){
-    //         Type::EvalResult ret;
-    //         if(p_val.type == ValueType::INVALID)
-    //         {
-    //             ret.from = p_expr;
-    //             ret.data = p_val;
-    //         }
+        // set the from expression when handling invalid value
+        auto wrap = [&p_expr](Type::ValueData&& p_val, ERR p_errcode = ERR::SUCCESS){
+            return Type::EvalResult {.from = p_expr, .data = p_val, .errcode = p_errcode};
+        };
 
-    //         return ret;
-    //     };
+        switch (p_expr->type)
+        {
+        case ExpressionType::GROUPING:
+            return evaluate(std::get<ExprShrd>(p_expr->content));
 
-    //     switch (p_expr->type)
-    //     {
-    //     case ExpressionType::GROUPING:
-    //         return evaluate(std::get<ExprShrd>(p_expr->content));
+        case ExpressionType::BINARY: 
+            return handle(evaluate(p_expr->left), [&](auto&& p_res) 
+            {
+                auto& left = p_res.data;
+                handle(evaluate(p_expr->right), [&](auto&& p__res) 
+                {
+                    auto& right = p__res.data;
+                    switch (std::get<TokenShrd>(p_expr->content)->type)
+                    {
+                    case TokenType::STAR:
+                        p_res = handle_fail(wrap(left * right), [](auto&& r){ r.errcode = ERR::INVALID_MUL_OPERATION; });
+                        return;
+                    case TokenType::PLUS:
+                        p_res = handle_fail(wrap(left + right), [](auto&& r){ r.errcode = ERR::INVALID_PLUS_OPERATION; });
+                        return;
+                    case TokenType::MINUS:
+                        p_res = handle_fail(wrap(left - right), [](auto&& r){ r.errcode = ERR::INVALID_MINUS_OPERATION; });
+                        return;
+                    }
 
-    //     case ExpressionType::BINARY: 
-    //     {
-    //         return handle(evaluate(p_expr->left), [&](auto&& p_res) 
-    //         {
-    //             auto& left = p_res.data;
-    //             handle(evaluate(p_expr->right), [&](auto&& p__res) 
-    //             {
-    //                 auto& right = p__res.data;
-    //                 switch (std::get<TokenShrd>(p_expr->content)->type)
-    //                 {
-    //                 case TokenType::STAR:
-    //                     left = handle_fail(wrap(left * right), [&](auto&& p_res){});
-    //                 case TokenType::PLUS:
-    //                     left = handle_fail(wrap(left + right), [&](auto&& p_res){}).data;
-    //                 case TokenType::MINUS:
-    //                     left = handle_fail(wrap(left - right), [&](auto&& p_res){}).data;
-    //                 }
-    //             });
-    //         });
-    //     }
+                    p_res.errcode = ERR::INVALID_BINARY_EXPR;
+                });
+            });
 
-    //     //     return ValueErr(p_expr, ERR::INVALID_BINARY_EXPR);
-    //     // case ExpressionType::UNARY:
-    //     // {
-    //     //     auto right = evaluate(p_expr->right);
-    //     //     switch (std::get<TokenShrd>(p_expr->content)->type)
-    //     //     {
-    //     //     case TokenType::MINUS:
-    //     //         return wrap(-right);
-    //     //     case TokenType::BANG:
-    //     //         return wrap(!right);
-    //     //     }
-    //     // }
+        case ExpressionType::UNARY:
+            return handle(evaluate(p_expr->right), [&](auto&& p_res) 
+            {
+                auto& right = p_res.data;
 
-    //     //     return ValueErr(p_expr, ERR::INVALID_UNARY_EXPR);
-    //     // case ExpressionType::LITERAL:
-    //     //     switch (std::get<TokenShrd>(p_expr->content)->type)
-    //     //     {
-    //     //     case TokenType::STRING:
-    //     //         return Value(std::get<TokenShrd>(p_expr->content)->literal);
-    //     //     case TokenType::INT:
-    //     //         return Value(std::stoi(std::get<TokenShrd>(p_expr->content)->literal));
-    //     //     case TokenType::FLOAT:
-    //     //         return Value(std::stof(std::get<TokenShrd>(p_expr->content)->literal));
-    //     //     case TokenType::FALSE:
-    //     //         return Value(false);
-    //     //     case TokenType::TRUE:
-    //     //         return Value(true);
-    //     //     }
+                switch (std::get<TokenShrd>(p_expr->content)->type)
+                {
+                case TokenType::MINUS:
+                    p_res = handle_fail(wrap(-right), [](auto&& r){ r.errcode = ERR::INVALID_NEGATION; });
+                    return;
+                case TokenType::BANG:
+                    p_res = handle_fail(wrap(!right), [](auto&& r){ r.errcode = ERR::INVALID_BANG_OP; });
+                    return;
+                }
 
-    //     //     return ValueErr(p_expr, ERR::INVALID_LITERAL);
-    //     }
+                p_res.errcode = ERR::INVALID_UNARY_EXPR;
+            });
+        case ExpressionType::LITERAL:
+            switch (std::get<TokenShrd>(p_expr->content)->type)
+            {
+            case TokenType::STRING:
+                return wrap(Value(std::get<TokenShrd>(p_expr->content)->literal));
+            case TokenType::INT:
+                return wrap(Value(std::stoi(std::get<TokenShrd>(p_expr->content)->literal)));
+            case TokenType::FLOAT:
+                return wrap(Value(std::stof(std::get<TokenShrd>(p_expr->content)->literal)));
+            case TokenType::FALSE:
+                return wrap(Value(false));
+            case TokenType::TRUE:
+                return wrap(Value(true));
+            }
 
-    //     return {};
-    //     // return ValueErr(p_expr, ERR::ILL_FORMED_EXPR);
-    // }
+            return wrap(InvalidValue(), ERR::INVALID_LITERAL);
+        }
+
+        return wrap(InvalidValue(), ERR::ILL_FORMED_EXPR);
+    }
 } // namespace Cent
 /// } Header Definitions

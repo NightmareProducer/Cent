@@ -20,10 +20,10 @@ int main(int argc, char *argv[])
             auto& expr = p_res.data;
             Tool::pretty_print(expr);
 
-            // handle(Parser::evaluate(parse_result.expr), [](auto &&v) 
-            // {
-            //     //handle value on success
-            // });
+            handle(Parser::evaluate(expr), [](auto &&v) 
+            {
+                //handle value on success
+            });
         });
         
     } else if (argc == 1)

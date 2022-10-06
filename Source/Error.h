@@ -10,6 +10,11 @@ namespace Cent::Constant
     enum class ERR {
         SUCCESS = 0,
         INVALID_OPERATION,
+        INVALID_MUL_OPERATION,
+        INVALID_PLUS_OPERATION,
+        INVALID_MINUS_OPERATION,
+        INVALID_NEGATION,
+        INVALID_BANG_OP,
 
         INVALID_EXPR,
         INVALID_BINARY_EXPR,

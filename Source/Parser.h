@@ -50,7 +50,7 @@ namespace Cent
     namespace Parser
     {
         Type::ParseResult parse(Type::TokenList p_tokens) noexcept;
-        // Type::EvalResult evaluate(const Type::ExprShrd& p_expr) noexcept;
+        Type::EvalResult evaluate(const Type::ExprShrd& p_expr) noexcept;
     }
 }
 
