@@ -101,9 +101,7 @@ namespace {
                 auto op = current_token();
                 handle(comparison(next_token()), [&](auto p_right)
                 {
-                    // Binary(p_left, op, p_right);
-                    // p_left = Binary(p_left, op, p_right);
-                    // auto x = Binary(p_left, op, p_right);
+                    p_left = Binary(p_left, op, p_right);
                 });
             }
         });
@@ -113,15 +111,15 @@ namespace {
     {
         using enum Cent::Constant::TokenType;
 
-        return handle(term(p_token), [&](auto&& p_res) 
+        return handle(term(p_token), [&](auto&& p_left) 
         {
-            // while(match(current_token(), GREATER, GREATER_EQ, LESS, LESS_EQ))
-            // {
-            //     auto op = current_token(); 
-            //     handle(term(next_token()), [&](auto&& p__res){
-            //         p_res.expr = Binary(p_res.expr, op, p__res.expr);
-            //     });
-            // }   
+            while(match(current_token(), GREATER, GREATER_EQ, LESS, LESS_EQ))
+            {
+                auto op = current_token(); 
+                handle(term(next_token()), [&](auto&& p_right){
+                    p_left = Binary(p_left, op, p_right);
+                });
+            }   
         });
     }
 

@@ -15,6 +15,13 @@ namespace Cent
             ExprShrd data;
             Constant::ERR errcode;
         };
+
+        struct EvalResult
+        {
+            ExprShrd from;
+            ValueData data;
+            Constant::ERR errcode;
+        };
     }
 
     namespace Tool
