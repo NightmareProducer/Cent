@@ -6,8 +6,20 @@
 #include "Value.h"
 #include "Error.h"
 
+#include <concepts>
+
 namespace Cent
 {
+    namespace Concept
+    {
+        template<typename T>
+        concept ResultWrapper = requires(T x)
+        {
+            x.data;
+            {x.errcode} -> std::convertible_to<Constant::ERR>; 
+        };
+    }
+
     namespace Type
     {
         struct ParseResult
@@ -26,7 +38,10 @@ namespace Cent
 
     namespace Tool
     {
-        inline bool is_valid(const Type::ParseResult& p_data)
+        using namespace Concept;
+
+        template<ResultWrapper T>
+        inline bool is_valid(const T& p_data)
         {
             return p_data.errcode == Constant::ERR::SUCCESS;
         }
