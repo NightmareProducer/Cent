@@ -13,7 +13,7 @@ namespace Cent
 {
     namespace Type
     {
-        struct ParseResult
+        struct ExprParseRes
         {
             ExprShrd data;
             Constant::ERR errcode;
@@ -40,7 +40,7 @@ namespace Cent
         };
 
         template<typename T>
-        concept isParseResult = std::same_as<std::decay_t<T>, ParseResult>;
+        concept isParseResult = std::same_as<std::decay_t<T>, ExprParseRes>;
     }
 
     namespace Tool
@@ -56,7 +56,7 @@ namespace Cent
 
     namespace Parser
     {
-        Type::ParseResult parse(Type::TokenList p_tokens) noexcept;
+        Type::ExprParseRes parse(Type::TokenList p_tokens) noexcept;
         Type::EvalResult evaluate(const Type::ExprShrd& p_expr) noexcept;
     }
 }

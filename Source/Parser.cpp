@@ -32,25 +32,25 @@ namespace {
 
     /// @brief Rule: expression -> equality
     /// @param p_token The token to be match with a producer 
-    ParseResult expression(TokenShrd p_token) noexcept;
+    ExprParseRes expression(TokenShrd p_token) noexcept;
     /// @brief Rule: equality -> comparison ( ( "!=" | "==" ) comparison )*;
     /// @param p_token The token to be match with a producer 
-    ParseResult equality(TokenShrd p_token)  noexcept;
+    ExprParseRes equality(TokenShrd p_token)  noexcept;
     /// @brief Rule: comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )*;
     /// @param p_token The token to be match with a producer 
-    ParseResult comparison(TokenShrd p_token) noexcept;
+    ExprParseRes comparison(TokenShrd p_token) noexcept;
     /// @brief Rule: term -> factor ( ( "-" | "+" ) factor )*;
     /// @param p_token The token to be match with a producer 
-    ParseResult term(TokenShrd p_token) noexcept;
+    ExprParseRes term(TokenShrd p_token) noexcept;
     /// @brief Rule: factor -> unary ( ( "*" | "/" ) unary )*;
     /// @param p_token The token to be match with a producer 
-    ParseResult factor(TokenShrd p_token) noexcept;
+    ExprParseRes factor(TokenShrd p_token) noexcept;
     /// @brief Rule: unary -> ( "!" | "-" ) unary | primary;
     /// @param p_token The token to be match with a producer 
-    ParseResult unary(TokenShrd p_token) noexcept;
+    ExprParseRes unary(TokenShrd p_token) noexcept;
     /// @brief Rule: NUMBER | STRING | "true" | "false" | "nil" | "(" EXPRESSION ")";
     /// @param p_token The token to be match with a producer 
-    ParseResult primary(TokenShrd p_token) noexcept;
+    ExprParseRes primary(TokenShrd p_token) noexcept;
  
     /// @brief Check wether the token matches any of the specified token types.
     /// @tparam ...T Enum TokenType
@@ -74,12 +74,12 @@ namespace {
 
 // { Static Function Definitions
 
-    ParseResult expression(TokenShrd p_token) noexcept
+    ExprParseRes expression(TokenShrd p_token) noexcept
     {
         return equality(p_token);
     }
 
-    ParseResult equality(TokenShrd p_token)  noexcept
+    ExprParseRes equality(TokenShrd p_token)  noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -98,7 +98,7 @@ namespace {
         });
     }
 
-    ParseResult comparison(TokenShrd p_token) noexcept
+    ExprParseRes comparison(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -116,7 +116,7 @@ namespace {
         });
     }
 
-    ParseResult term(TokenShrd p_token) noexcept
+    ExprParseRes term(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -135,7 +135,7 @@ namespace {
         });
     }
 
-    ParseResult factor(TokenShrd p_token) noexcept
+    ExprParseRes factor(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -154,7 +154,7 @@ namespace {
         });
     }
 
-    ParseResult unary(TokenShrd p_token) noexcept
+    ExprParseRes unary(TokenShrd p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
         if(match(p_token, BANG, MINUS))
@@ -169,14 +169,14 @@ namespace {
         return primary(p_token);
     }
 
-    ParseResult primary(TokenShrd p_token) noexcept
+    ExprParseRes primary(TokenShrd p_token) noexcept
     {
         using namespace Cent::Constant;
         using enum Cent::Constant::TokenType;
 
         auto wrap = [](const ExprShrd& p_expr, ERR p_errcode = ERR::SUCCESS)
         {
-            return ParseResult{p_expr, p_errcode};
+            return ExprParseRes{p_expr, p_errcode};
         };
 
         if(match(p_token, FALSE, TRUE, STRING, INT, FLOAT))
@@ -235,7 +235,7 @@ namespace {
 // { Header Definitions
 namespace Cent::Parser
 {
-    Type::ParseResult parse(Type::TokenList p_tokens) noexcept
+    Type::ExprParseRes parse(Type::TokenList p_tokens) noexcept
     {
         s_index = 0;
         s_tokens = &p_tokens;
