@@ -5,6 +5,8 @@
 #include <string>
 #include <string_view>
 #include <memory>
+#include <concepts>
+#include <type_traits>
 
 
 namespace Cent
@@ -48,14 +50,19 @@ namespace Cent
         };
 
 
-        // Alias
-
         using TokenPtr = std::unique_ptr<TokenData>;
         using TokenShrd = std::shared_ptr<TokenData>;
         using TokenList = std::vector<TokenShrd>;
-
-        //// Alias
     } // namespace Type
+
+    
+    namespace Concept
+    {
+        using namespace Type;
+
+        template<typename T>
+        concept isTokenShrd = std::same_as<std::decay_t<T>, TokenShrd>;
+    } // namespace Concept
 
 
     namespace Tool

@@ -5,6 +5,8 @@
 
 #include <memory>
 #include <variant>
+#include <concepts>
+#include <type_traits>
 
 namespace Cent
 {
@@ -30,6 +32,15 @@ namespace Cent
         using ExprPtr = std::unique_ptr<ExpressionData>;
         using ExprShrd = std::shared_ptr<ExpressionData>;
     } // namespace Type
+
+    
+    namespace Concept
+    {
+        using namespace Type;
+
+        template<typename T>
+        concept isExprShrd = std::same_as<std::decay_t<T>, ExprShrd>;
+    } // namespace Concept
 
 
     namespace Tool

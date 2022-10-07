@@ -1,6 +1,8 @@
 #include "Cent.h"
 
 #include <iostream>
+#include <concepts>
+#include <type_traits>
 
 
 using namespace Cent;
@@ -8,7 +10,6 @@ using namespace Cent;
 
 int main(int argc, char *argv[]) 
 {
-
     if (argc == 2)
     {
         auto content = Tool::file2string(argv[1]);
@@ -20,11 +21,14 @@ int main(int argc, char *argv[])
             auto& expr = p_res.data;
             Tool::pretty_print(expr);
 
-            handle(Parser::evaluate(expr), [](auto &&v) 
+            handle(Parser::evaluate(expr), [](auto &&p_res) 
             {
                 //handle value on success
+            }, [](auto&& p_res)
+            {
+                // Handle failed evaluate
             });
-        });
+        }, Handler::print_fail);
         
     } else if (argc == 1)
     {

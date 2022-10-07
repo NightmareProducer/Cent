@@ -7,19 +7,10 @@
 #include "Error.h"
 
 #include <concepts>
+#include <type_traits>
 
 namespace Cent
 {
-    namespace Concept
-    {
-        template<typename T>
-        concept ResultWrapper = requires(T x)
-        {
-            x.data;
-            {x.errcode} -> std::convertible_to<Constant::ERR>; 
-        };
-    }
-
     namespace Type
     {
         struct ParseResult
@@ -34,6 +25,22 @@ namespace Cent
             ValueData data;
             Constant::ERR errcode;
         };
+    }
+
+    namespace Concept
+    {
+        using namespace Type;
+        using namespace Constant;
+
+        template<typename T>
+        concept ResultWrapper = requires(T x)
+        {
+            x.data;
+            {x.errcode} -> std::convertible_to<ERR>; 
+        };
+
+        template<typename T>
+        concept isParseResult = std::same_as<std::decay_t<T>, ParseResult>;
     }
 
     namespace Tool
