@@ -23,11 +23,22 @@ namespace Cent
 {
     using namespace Concept;
 
-    template<Handleable T, Handler<T> Fn1>
-        T handle(T &&p_data, Fn1 p_pass)
+    template<Handleable T, Handler<T> Fn>
+        T handle(T &&p_data, Fn p_pass)
     {
         if (Tool::is_valid(p_data))
             p_pass(p_data);
+        
+        return p_data; 
+    }
+
+    template<Handleable T, Handler<T> Fn1, Handler<T> Fn2>
+        T handle(T &&p_data, Fn1 p_pass, Fn2 p_fail)
+    {
+        if (Tool::is_valid(p_data))
+            p_pass(p_data);
+        else
+            p_fail(p_data);
         
         return p_data; 
     }
