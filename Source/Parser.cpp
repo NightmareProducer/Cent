@@ -252,7 +252,6 @@ namespace Cent::Parser
         using namespace Cent::Constant;
         using namespace Cent::Type;
 
-        // set the from expression when handling invalid value
         auto wrap = [&p_expr](Type::ValueData&& p_val, ERR p_errcode = ERR::SUCCESS){
             return Type::EvalResult {.from = p_expr, .data = p_val, .errcode = p_errcode};
         };
