@@ -1,7 +1,7 @@
 #ifndef CENT_SCANNER
 #define CENT_SCANNER
 
-#include "Token.h"
+#include "Token.hpp"
 
 #include <string>
 #include <vector>

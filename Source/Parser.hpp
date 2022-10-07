@@ -1,10 +1,10 @@
 #ifndef CENT_PARSER
 #define CENT_PARSER
 
-#include "Token.h"
-#include "Expressions.h"
-#include "Value.h"
-#include "Error.h"
+#include "Token.hpp"
+#include "Expressions.hpp"
+#include "Value.hpp"
+#include "Error.hpp"
 
 #include <concepts>
 #include <type_traits>

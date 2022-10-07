@@ -1,6 +1,6 @@
-#include "Value.h"
-#include "Error.h"
-#include "Expressions.h"
+#include "Value.hpp"
+#include "Error.hpp"
+#include "Expressions.hpp"
 
 #include <iostream>
 

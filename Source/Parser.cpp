@@ -1,5 +1,5 @@
-#include "Parser.h"
-#include "Handler.h"
+#include "Parser.hpp"
+#include "Handler.hpp"
 
 #include <concepts>
 #include <array>

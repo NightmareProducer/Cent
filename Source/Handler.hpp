@@ -1,10 +1,10 @@
 #ifndef CENT_HANDLER
 #define CENT_HANDLER
 
-#include "Value.h"
-#include "Expressions.h"
-#include "Parser.h"
-#include "Token.h"
+#include "Value.hpp"
+#include "Expressions.hpp"
+#include "Parser.hpp"
+#include "Token.hpp"
 
 #include <concepts>
 #include <utility>
@@ -71,7 +71,7 @@ namespace Cent::Handler
 
         if constexpr(isParseResult<std::decay_t<T>>)
         {
-            auto tkn = std::get<TokenShrd>(p_data.data->content);
+            auto& tkn = std::get<TokenShrd>(p_data.data->content);
 
             std::cout << tkn->lexeme << std::endl;
         }

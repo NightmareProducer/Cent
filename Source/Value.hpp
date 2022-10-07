@@ -1,8 +1,8 @@
 #ifndef CENT_VALUE
 #define CENT_VALUE
 
-#include "Expressions.h"
-#include "Error.h"
+#include "Expressions.hpp"
+#include "Error.hpp"
 
 #include <memory>
 #include <string>

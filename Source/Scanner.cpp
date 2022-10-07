@@ -1,6 +1,6 @@
-#include "Scanner.h"
-#include "Token.h"
-#include "Error.h"
+#include "Scanner.hpp"
+#include "Token.hpp"
+#include "Error.hpp"
 
 #include <cctype>
 #include <fstream>
