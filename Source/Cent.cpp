@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
         auto tokens = Scanner::scan(content);
 
-        handle(Parser::parse(tokens), [](auto&& p_res) 
+        handle(Parser::parse_expr(tokens), [](auto&& p_res) 
         {
             auto& expr = p_res.data;
             Tool::pretty_print(expr);

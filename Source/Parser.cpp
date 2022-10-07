@@ -22,7 +22,7 @@ namespace {
 
     /// @brief current token_list index
     thread_local std::size_t s_index = 0; 
-    /// @brief assigned when parse() is called
+    /// @brief assigned when parse_expr() is called
     thread_local Type::TokenList *s_tokens = nullptr;
 
 //// } Static Variables 
@@ -235,7 +235,7 @@ namespace {
 // { Header Definitions
 namespace Cent::Parser
 {
-    Type::ExprParseRes parse(Type::TokenList p_tokens) noexcept
+    Type::ExprParseRes parse_expr(Type::TokenList p_tokens) noexcept
     {
         s_index = 0;
         s_tokens = &p_tokens;
