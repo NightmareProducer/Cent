@@ -11,24 +11,24 @@ namespace {
     using namespace Cent::Constant;
     using namespace Cent::Type;
 
-    // { Concepts
+// { Concepts
 
     template<typename T> 
     concept TokenTypes = std::same_as<T, Constant::TokenType>;
 
-    //// } Concepts
+//// } Concepts
 
-    // { Static Variables
+// { Static Variables
 
     /// @brief current token_list index
     thread_local std::size_t s_index = 0; 
     /// @brief assigned when parse() is called
     thread_local Type::TokenList *s_tokens = nullptr;
 
-    //// } Static Variables 
+//// } Static Variables 
 
 
-    // { Static Function Declarations
+// { Static Function Declarations
 
     /// @brief Rule: expression -> equality
     /// @param p_token The token to be match with a producer 
@@ -69,20 +69,10 @@ namespace {
     /// @brief Increments the index and returns the token
     TokenShrd next_token();
 
-    //// } Static Functions Declarations 
+//// } Static Functions Declarations 
 
 
-    // { Static Function Definitions
-    ParseResult wrap(const ExprShrd& p_expr, ERR p_errcode)
-    {
-        return {p_expr, p_errcode};
-    }
-
-    ParseResult wrap(const ExprShrd& p_expr)
-    {
-        return {p_expr, ERR::SUCCESS};
-    }
-
+// { Static Function Definitions
 
     ParseResult expression(TokenShrd p_token) noexcept
     {
@@ -183,6 +173,11 @@ namespace {
     {
         using namespace Cent::Constant;
         using enum Cent::Constant::TokenType;
+
+        auto wrap = [](const ExprShrd& p_expr, ERR p_errcode = ERR::SUCCESS)
+        {
+            return ParseResult{p_expr, p_errcode};
+        };
 
         if(match(p_token, FALSE, TRUE, STRING, INT, FLOAT))
             return wrap((next(), Literal(p_token)));
