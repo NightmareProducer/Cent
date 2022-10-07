@@ -69,7 +69,7 @@ namespace Cent::Handler
         using namespace Type;
         using namespace Constant;
 
-        if constexpr(isParseResult<std::decay_t<T>>)
+        if constexpr(isExprParseRes<T>)
         {
             auto& tkn = std::get<TokenShrd>(p_data.data->content);
 

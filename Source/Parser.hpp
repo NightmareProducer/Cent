@@ -3,6 +3,7 @@
 
 #include "Token.hpp"
 #include "Expressions.hpp"
+#include "Statement.hpp"
 #include "Value.hpp"
 #include "Error.hpp"
 
@@ -16,6 +17,12 @@ namespace Cent
         struct ExprParseRes
         {
             ExprShrd data;
+            Constant::ERR errcode;
+        };
+
+        struct StmtParseRes
+        {
+            Stmt data;
             Constant::ERR errcode;
         };
 
@@ -40,7 +47,7 @@ namespace Cent
         };
 
         template<typename T>
-        concept isParseResult = std::same_as<std::decay_t<T>, ExprParseRes>;
+        concept isExprParseRes = std::same_as<std::decay_t<T>, ExprParseRes>;
     }
 
     namespace Tool

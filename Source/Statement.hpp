@@ -3,6 +3,8 @@
 
 #include "Expressions.hpp"
 
+#include <concepts>
+
 namespace Cent
 {
     namespace Type
