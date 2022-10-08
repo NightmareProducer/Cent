@@ -21,6 +21,8 @@ namespace Cent::Constant
         INVALID_UNARY_EXPR,
         ILL_FORMED_EXPR,
 
+        INVALID_EXPR_STMT,
+
         INVALID_LITERAL,
         MISSING_RIGHT_PAREN
     };
