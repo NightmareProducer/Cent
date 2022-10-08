@@ -10,6 +10,7 @@ namespace {
     using namespace Cent;
     using namespace Cent::Constant;
     using namespace Cent::Type;
+    using namespace Tool;
 
 // { Concepts
 
@@ -32,27 +33,27 @@ namespace {
 
     /// @brief Rule: expression -> equality
     /// @param p_token The token to be match with a producer 
-    ExprParseRes expression(TokenShrd p_token) noexcept;
+    ExprParseRes expression(TokenShrd& p_token) noexcept;
     /// @brief Rule: equality -> comparison ( ( "!=" | "==" ) comparison )*;
     /// @param p_token The token to be match with a producer 
-    ExprParseRes equality(TokenShrd p_token)  noexcept;
+    ExprParseRes equality(TokenShrd& p_token)  noexcept;
     /// @brief Rule: comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )*;
     /// @param p_token The token to be match with a producer 
-    ExprParseRes comparison(TokenShrd p_token) noexcept;
+    ExprParseRes comparison(TokenShrd& p_token) noexcept;
     /// @brief Rule: term -> factor ( ( "-" | "+" ) factor )*;
     /// @param p_token The token to be match with a producer 
-    ExprParseRes term(TokenShrd p_token) noexcept;
+    ExprParseRes term(TokenShrd& p_token) noexcept;
     /// @brief Rule: factor -> unary ( ( "*" | "/" ) unary )*;
     /// @param p_token The token to be match with a producer 
-    ExprParseRes factor(TokenShrd p_token) noexcept;
+    ExprParseRes factor(TokenShrd& p_token) noexcept;
     /// @brief Rule: unary -> ( "!" | "-" ) unary | primary;
     /// @param p_token The token to be match with a producer 
-    ExprParseRes unary(TokenShrd p_token) noexcept;
+    ExprParseRes unary(TokenShrd& p_token) noexcept;
     /// @brief Rule: NUMBER | STRING | "true" | "false" | "nil" | "(" EXPRESSION ")";
     /// @param p_token The token to be match with a producer 
-    ExprParseRes primary(TokenShrd p_token) noexcept;
+    ExprParseRes primary(TokenShrd& p_token) noexcept;
 
-    StmtParseRes statement(TokenShrd&& p_token) noexcept;
+    StmtParseRes statement(TokenShrd& p_token) noexcept;
     StmtParseRes expression_stmt(TokenShrd& p_token) noexcept;
     StmtParseRes print_stmt(TokenShrd& p_token) noexcept;
  
@@ -78,12 +79,12 @@ namespace {
 
 // { Static Function Definitions
 
-    ExprParseRes expression(TokenShrd p_token) noexcept
+    ExprParseRes expression(TokenShrd& p_token) noexcept
     {
         return equality(p_token);
     }
 
-    ExprParseRes equality(TokenShrd p_token)  noexcept
+    ExprParseRes equality(TokenShrd& p_token)  noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -93,16 +94,16 @@ namespace {
             while(match(current_token(), BANG_EQ, EQUAL_EQ))
             {
                 auto op = current_token();
-                handle(comparison(next_token()), [&](auto p__res)
+                handle(comparison(LRefTkn(next_token())), [&](auto p__res)
                 {
                     auto &right = p__res.data;
-                    p_res.data = Binary(std::move(left), op, std::move(right));
+                    p_res.data = Binary(left, op, right);
                 });
             }
         });
     }
 
-    ExprParseRes comparison(TokenShrd p_token) noexcept
+    ExprParseRes comparison(TokenShrd& p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -112,15 +113,15 @@ namespace {
             while(match(current_token(), GREATER, GREATER_EQ, LESS, LESS_EQ))
             {
                 auto op = current_token();
-                handle(term(next_token()), [&](auto&& p__res){
+                handle(term(LRefTkn(next_token())), [&](auto&& p__res){
                     auto& right = p__res.data;
-                    p_res.data = Binary(std::move(left), op, std::move(right));
+                    p_res.data = Binary(left, op, right);
                 });
             }   
         });
     }
 
-    ExprParseRes term(TokenShrd p_token) noexcept
+    ExprParseRes term(TokenShrd& p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -130,16 +131,16 @@ namespace {
             while(match(current_token(), MINUS, PLUS))
             {
                 auto op = current_token();
-                handle(factor(next_token()), [&](auto&& p__res) 
+                handle(factor(LRefTkn(next_token())), [&](auto&& p__res) 
                 {
                     auto& right = p__res.data;
-                    p_res.data = Binary(std::move(left), op, std::move(right));
+                    p_res.data = Binary(left, op, right);
                 });
             }
         });
     }
 
-    ExprParseRes factor(TokenShrd p_token) noexcept
+    ExprParseRes factor(TokenShrd& p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
 
@@ -149,21 +150,21 @@ namespace {
             while(match(current_token(), SLASH, STAR))
             {
                 auto op = current_token();
-                handle(unary(next_token()), [&](auto&& p__res) 
+                handle(unary(LRefTkn(next_token())), [&](auto&& p__res) 
                 {
                     auto& right = p__res.data;
-                    p_res.data = Binary(std::move(left), op, std::move(right));
+                    p_res.data = Binary(left, op, right);
                 });
             }
         });
     }
 
-    ExprParseRes unary(TokenShrd p_token) noexcept
+    ExprParseRes unary(TokenShrd& p_token) noexcept
     {
         using enum Cent::Constant::TokenType;
         if(match(p_token, BANG, MINUS))
         {
-            return handle(unary(next_token()), [&](auto&& p_res) 
+            return handle(unary(LRefTkn(next_token())), [&](auto&& p_res) 
             {
                 p_res.data = Unary(p_token, p_res.data);
                 next();
@@ -173,7 +174,7 @@ namespace {
         return primary(p_token);
     }
 
-    ExprParseRes primary(TokenShrd p_token) noexcept
+    ExprParseRes primary(TokenShrd& p_token) noexcept
     {
         using namespace Cent::Constant;
         using enum Cent::Constant::TokenType;
@@ -188,7 +189,7 @@ namespace {
         
         if(match(p_token, LEFT_PAREN))
         {
-            auto res = expression(next_token());
+            auto res = expression(LRefTkn(next_token()));
 
             if(next(); match(current_token(), RIGHT_PAREN))
                 return wrap(InvalidExpr(p_token), ERR::MISSING_RIGHT_PAREN);
@@ -200,7 +201,7 @@ namespace {
     }
 
 
-    StmtParseRes statement(TokenShrd&& p_token) noexcept
+    StmtParseRes statement(TokenShrd& p_token) noexcept
     {
         using enum Constant::TokenType;
         if(!at_end())
@@ -296,7 +297,7 @@ namespace Cent::Parser
         s_index = 0;
         s_tokens = &p_tokens;
 
-        auto ret {expression(current_token())};
+        auto ret {expression(LRefTkn(current_token()))};
 
         s_tokens = nullptr;
 
@@ -309,7 +310,7 @@ namespace Cent::Parser
         s_index = 0;
         s_tokens = &p_tokens;
 
-        auto ret {statement(current_token())};
+        auto ret {statement(LRefTkn(current_token()))};
         s_tokens = nullptr;
 
         return ret;

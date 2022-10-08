@@ -44,31 +44,31 @@ namespace Cent::Tool
 
 namespace Cent // External Functions
 {
-    Type::ExprPtr Binary(Type::ExprShrd p_left, Type::TokenShrd p_op, Type::ExprShrd p_right) noexcept
+    Type::ExprPtr Binary(Type::ExprShrd& p_left, Type::TokenShrd& p_op, Type::ExprShrd& p_right) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::BINARY, p_op, p_left, p_right});
     }
 
-    Type::ExprPtr Unary(Type::TokenShrd p_op, Type::ExprShrd p_expr) noexcept
+    Type::ExprPtr Unary(Type::TokenShrd& p_op, Type::ExprShrd& p_expr) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::UNARY, p_op, nullptr, p_expr});
     }
 
-    Type::ExprPtr Grouping(Type::ExprShrd p_expr) noexcept
+    Type::ExprPtr Grouping(Type::ExprShrd& p_expr) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::GROUPING, p_expr});
     }
 
-    Type::ExprPtr Literal(Type::TokenShrd p_literal) noexcept
+    Type::ExprPtr Literal(Type::TokenShrd& p_literal) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::LITERAL, p_literal});
     }
 
-    Type::ExprPtr InvalidExpr(Type::TokenShrd p_token) noexcept
+    Type::ExprPtr InvalidExpr(Type::TokenShrd& p_token) noexcept
     {
         return std::unique_ptr<Type::ExpressionData>(
             new Type::ExpressionData{Constant::ExpressionType::INVALID, p_token});

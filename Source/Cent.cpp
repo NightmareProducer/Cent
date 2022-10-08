@@ -7,9 +7,6 @@ using namespace Cent;
 
 int main(int argc, char *argv[]) 
 {
-
-
-
     if (argc == 2)
     {
         auto content = Tool::file2string(argv[1]);

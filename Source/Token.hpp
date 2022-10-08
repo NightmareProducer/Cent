@@ -55,6 +55,13 @@ namespace Cent
         using TokenList = std::vector<TokenShrd>;
     } // namespace Type
 
+    namespace Tool
+    {
+        using namespace Type;
+
+        using LRefTkn = std::add_lvalue_reference_t<TokenShrd>;
+    }
+
     
     namespace Concept
     {
