@@ -41,10 +41,10 @@ namespace Cent
     }
 
     
-    constexpr Type::ValueData Value(int p_value);
-    constexpr Type::ValueData Value(float p_value);
-    constexpr Type::ValueData Value(std::string p_value);
-    constexpr Type::ValueData Value(bool p_value);
+    Type::ValueData Value(int p_value);
+    Type::ValueData Value(float p_value);
+    Type::ValueData Value(std::string p_value);
+    Type::ValueData Value(bool p_value);
     Type::ValueData InvalidValue();
 
     Type::ValueData operator* (const Type::ValueData &p_a, const Type::ValueData &p_b);

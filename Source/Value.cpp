@@ -7,22 +7,22 @@
 
 namespace Cent
 {
-    constexpr Type::ValueData Value(int p_value)
+    Type::ValueData Value(int p_value)
     {
         return {Constant::ValueType::INT, p_value};
     }
 
-    constexpr Type::ValueData Value(float p_value)
+    Type::ValueData Value(float p_value)
     {
         return {Constant::ValueType::FLOAT, p_value};
     }
 
-    constexpr Type::ValueData Value(std::string p_value)
+    Type::ValueData Value(std::string p_value)
     {
         return {Constant::ValueType::STRING, p_value};
     }
 
-    constexpr Type::ValueData Value(bool p_value)
+    Type::ValueData Value(bool p_value)
     {
         return {Constant::ValueType::BOOL, p_value};
     }

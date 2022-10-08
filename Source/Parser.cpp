@@ -94,7 +94,8 @@ namespace {
             while(match(current_token(), BANG_EQ, EQUAL_EQ))
             {
                 auto op = current_token();
-                handle(comparison(LRefTkn(next_token())), [&](auto p__res)
+                auto tkn = next_token();
+                handle(comparison(tkn), [&](auto p__res)
                 {
                     auto &right = p__res.data;
                     p_res.data = Binary(left, op, right);
@@ -113,7 +114,8 @@ namespace {
             while(match(current_token(), GREATER, GREATER_EQ, LESS, LESS_EQ))
             {
                 auto op = current_token();
-                handle(term(LRefTkn(next_token())), [&](auto&& p__res){
+                auto tkn = next_token();
+                handle(term(tkn), [&](auto&& p__res){
                     auto& right = p__res.data;
                     p_res.data = Binary(left, op, right);
                 });
@@ -131,7 +133,8 @@ namespace {
             while(match(current_token(), MINUS, PLUS))
             {
                 auto op = current_token();
-                handle(factor(LRefTkn(next_token())), [&](auto&& p__res) 
+                auto tkn = next_token();
+                handle(factor(tkn), [&](auto&& p__res) 
                 {
                     auto& right = p__res.data;
                     p_res.data = Binary(left, op, right);
@@ -150,7 +153,8 @@ namespace {
             while(match(current_token(), SLASH, STAR))
             {
                 auto op = current_token();
-                handle(unary(LRefTkn(next_token())), [&](auto&& p__res) 
+                auto tkn = next_token();
+                handle(unary(tkn), [&](auto&& p__res) 
                 {
                     auto& right = p__res.data;
                     p_res.data = Binary(left, op, right);
@@ -164,7 +168,8 @@ namespace {
         using enum Cent::Constant::TokenType;
         if(match(p_token, BANG, MINUS))
         {
-            return handle(unary(LRefTkn(next_token())), [&](auto&& p_res) 
+            auto tkn = next_token();
+            return handle(unary(tkn), [&](auto&& p_res) 
             {
                 p_res.data = Unary(p_token, p_res.data);
                 next();
@@ -189,7 +194,8 @@ namespace {
         
         if(match(p_token, LEFT_PAREN))
         {
-            auto res = expression(LRefTkn(next_token()));
+            auto tkn = next_token();
+            auto res = expression(tkn);
 
             if(next(); match(current_token(), RIGHT_PAREN))
                 return wrap(InvalidExpr(p_token), ERR::MISSING_RIGHT_PAREN);
@@ -297,7 +303,8 @@ namespace Cent::Parser
         s_index = 0;
         s_tokens = &p_tokens;
 
-        auto ret {expression(LRefTkn(current_token()))};
+        auto tkn = current_token();
+        auto ret {expression(tkn)};
 
         s_tokens = nullptr;
 
@@ -309,8 +316,8 @@ namespace Cent::Parser
     {
         s_index = 0;
         s_tokens = &p_tokens;
-
-        auto ret {statement(LRefTkn(current_token()))};
+        auto tkn = current_token();
+        auto ret {statement(tkn)};
         s_tokens = nullptr;
 
         return ret;
